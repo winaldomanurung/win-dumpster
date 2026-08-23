@@ -13,8 +13,6 @@ interface ArticlePageProps {
   }>
 }
 
-export const revalidate = 3600
-
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
