@@ -1,4 +1,5 @@
 import { notion, NOTION_DATA_SOURCE_ID } from './notion'
+import type { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 
 export interface Article {
   title: string
@@ -6,11 +7,11 @@ export interface Article {
   author: string
   date: string
   slug: string
-  content?: string
 }
 
 export interface ArticleWithSlug extends Article {
   slug: string
+  pageId: string
 }
 
 type NotionProperty = {
@@ -80,9 +81,13 @@ function mapNotionPage(page: any): ArticleWithSlug {
     author: getTextProperty(properties, 'Author'),
     date: getDateProperty(properties, 'Date'),
     slug: getTextProperty(properties, 'Slug'),
+    pageId: page.id,
   }
 }
 
+/**
+ * Get all published articles.
+ */
 export async function getAllArticles(): Promise<ArticleWithSlug[]> {
   const response = await notion.dataSources.query({
     data_source_id: NOTION_DATA_SOURCE_ID!,
@@ -105,6 +110,9 @@ export async function getAllArticles(): Promise<ArticleWithSlug[]> {
     .map(mapNotionPage)
 }
 
+/**
+ * Get a single published article by slug.
+ */
 export async function getArticleBySlug(
   slug: string,
 ): Promise<ArticleWithSlug | undefined> {
@@ -138,49 +146,68 @@ export async function getArticleBySlug(
   return mapNotionPage(page)
 }
 
-export async function getArticleContent(pageId: string): Promise<string> {
-  const response = await notion.pages.retrieveMarkdown({
-    page_id: pageId,
-  })
+/**
+ * Get all blocks inside a Notion page.
+ *
+ * This is used by NotionContent.tsx to render
+ * native Notion blocks such as:
+ *
+ * - paragraph
+ * - heading
+ * - image
+ * - video
+ * - file
+ * - bookmark
+ * - bulleted list
+ * - numbered list
+ * - quote
+ * - callout
+ * - code
+ * - divider
+ * - table
+ */
+export async function getArticleBlocks(
+  pageId: string,
+): Promise<BlockObjectResponse[]> {
+  const blocks: BlockObjectResponse[] = []
 
-  return response.markdown
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await notion.blocks.children.list({
+      block_id: pageId,
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    })
+
+    for (const block of response.results) {
+      if ('type' in block) {
+        blocks.push(block as BlockObjectResponse)
+      }
+    }
+
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
+  } while (cursor)
+
+  return blocks
 }
 
-export async function getArticleBySlugWithContent(
+/**
+ * Get article + all native Notion blocks.
+ */
+export async function getArticleBySlugWithBlocks(
   slug: string,
-): Promise<ArticleWithSlug & { content: string }> {
-  const response = await notion.dataSources.query({
-    data_source_id: NOTION_DATA_SOURCE_ID!,
-    filter: {
-      and: [
-        {
-          property: 'Slug',
-          rich_text: {
-            equals: slug,
-          },
-        },
-        {
-          property: 'Status',
-          select: {
-            equals: 'Published',
-          },
-        },
-      ],
-    },
-    page_size: 1,
-  })
+): Promise<ArticleWithSlug & { blocks: BlockObjectResponse[] }> {
+  const article = await getArticleBySlug(slug)
 
-  const page = response.results[0]
-
-  if (!page || !('properties' in page)) {
+  if (!article) {
     throw new Error(`Article not found: ${slug}`)
   }
 
-  const article = mapNotionPage(page)
-  const content = await getArticleContent(page.id)
+  const blocks = await getArticleBlocks(article.pageId)
 
   return {
     ...article,
-    content,
+    blocks,
   }
 }

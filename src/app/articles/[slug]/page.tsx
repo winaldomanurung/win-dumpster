@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation'
 import { type Metadata } from 'next'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypePrism from 'rehype-prism-plus'
 
 import { ArticleLayout } from '@/components/ArticleLayout'
-import { getArticleBySlugWithContent } from '@/lib/articles'
+import { NotionContent } from '@/components/NotionContent'
+import { getArticleBySlug, getArticleBlocks } from '@/lib/articles'
 
 interface ArticlePageProps {
   params: Promise<{
@@ -13,39 +11,39 @@ interface ArticlePageProps {
   }>
 }
 
+export const revalidate = 300
+
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params
 
-  try {
-    const article = await getArticleBySlugWithContent(slug)
+  const article = await getArticleBySlug(slug)
 
-    return {
-      title: article.title,
-      description: article.description,
-    }
-  } catch {
+  if (!article) {
     return {}
+  }
+
+  return {
+    title: article.title,
+    description: article.description,
   }
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
 
-  let article
+  const article = await getArticleBySlug(slug)
 
-  try {
-    article = await getArticleBySlugWithContent(slug)
-  } catch {
+  if (!article) {
     notFound()
   }
 
+  const blocks = await getArticleBlocks(article.pageId)
+
   return (
     <ArticleLayout article={article}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypePrism]}>
-        {article.content}
-      </ReactMarkdown>
+      <NotionContent blocks={blocks} />
     </ArticleLayout>
   )
 }
