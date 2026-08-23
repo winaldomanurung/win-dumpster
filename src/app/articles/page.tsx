@@ -2,6 +2,7 @@ import { type Metadata } from 'next'
 
 import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
+
 import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
 import { formatDate } from '@/lib/formatDate'
 
@@ -12,6 +13,7 @@ function Article({ article }: { article: ArticleWithSlug }) {
         <Card.Title href={`/articles/${article.slug}`}>
           {article.title}
         </Card.Title>
+
         <Card.Eyebrow
           as="time"
           dateTime={article.date}
@@ -20,9 +22,12 @@ function Article({ article }: { article: ArticleWithSlug }) {
         >
           {formatDate(article.date)}
         </Card.Eyebrow>
+
         <Card.Description>{article.description}</Card.Description>
+
         <Card.Cta>Read article</Card.Cta>
       </Card>
+
       <Card.Eyebrow
         as="time"
         dateTime={article.date}
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ArticlesIndex() {
-  let articles = await getAllArticles()
+  const articles = await getAllArticles()
 
   return (
     <SimpleLayout
