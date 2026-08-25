@@ -1,112 +1,244 @@
 import { NextRequest, NextResponse } from 'next/server'
+import convert from 'heic-convert'
 import { notion } from '@/lib/notion'
+
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   const blockId = request.nextUrl.searchParams.get('blockId')
 
   if (!blockId) {
-    return NextResponse.json({ error: 'Missing blockId' }, { status: 400 })
+    return NextResponse.json(
+      {
+        error: 'Missing blockId',
+      },
+      {
+        status: 400,
+      },
+    )
+  }
+
+  /*
+   * Notion block IDs are UUIDs.
+   * We accept both:
+   *
+   * 12345678-1234-1234-1234-123456789abc
+   *
+   * and:
+   *
+   * 12345678123412341234123456789abc
+   */
+  const normalizedBlockId = blockId.replace(/-/g, '')
+
+  if (!/^[0-9a-fA-F]{32}$/.test(normalizedBlockId)) {
+    return NextResponse.json(
+      {
+        error: 'Invalid blockId',
+      },
+      {
+        status: 400,
+      },
+    )
   }
 
   try {
+    /*
+     * Retrieve the Notion block.
+     *
+     * For Notion-hosted media, the URL returned here
+     * is temporary/signed. We intentionally retrieve it
+     * at request time.
+     */
     const block = await notion.blocks.retrieve({
       block_id: blockId,
     })
 
     if (!('type' in block)) {
       return NextResponse.json(
-        { error: 'Invalid Notion block' },
-        { status: 400 },
+        {
+          error: 'Invalid Notion block',
+        },
+        {
+          status: 400,
+        },
       )
     }
 
-    let url: string | null = null
+    let mediaUrl: string | null = null
 
+    /*
+     * IMAGE
+     */
     if (block.type === 'image') {
-      const image = block.image
+      const media = block.image
 
-      if (image.type === 'external') {
-        url = image.external.url
-      } else if (image.type === 'file') {
-        url = image.file.url
+      if (media.type === 'external') {
+        mediaUrl = media.external.url
+      }
+
+      if (media.type === 'file') {
+        mediaUrl = media.file.url
       }
     }
 
+    /*
+     * VIDEO
+     */
     if (block.type === 'video') {
-      const video = block.video
+      const media = block.video
 
-      if (video.type === 'external') {
-        url = video.external.url
-      } else if (video.type === 'file') {
-        url = video.file.url
+      if (media.type === 'external') {
+        mediaUrl = media.external.url
+      }
+
+      if (media.type === 'file') {
+        mediaUrl = media.file.url
       }
     }
 
+    /*
+     * FILE
+     */
     if (block.type === 'file') {
-      const file = block.file
+      const media = block.file
 
-      if (file.type === 'external') {
-        url = file.external.url
-      } else if (file.type === 'file') {
-        url = file.file.url
+      if (media.type === 'external') {
+        mediaUrl = media.external.url
+      }
+
+      if (media.type === 'file') {
+        mediaUrl = media.file.url
       }
     }
 
-    if (!url) {
+    if (!mediaUrl) {
       return NextResponse.json(
-        { error: 'Media URL not found' },
-        { status: 404 },
+        {
+          error: 'Media URL not found',
+        },
+        {
+          status: 404,
+        },
       )
     }
 
-    const response = await fetch(url, {
+    /*
+     * Fetch the actual media from Notion.
+     */
+    const mediaResponse = await fetch(mediaUrl, {
       cache: 'no-store',
     })
 
-    if (!response.ok) {
+    if (!mediaResponse.ok) {
+      console.error('Failed to fetch Notion media:', mediaResponse.status)
+
       return NextResponse.json(
         {
           error: 'Failed to fetch media from Notion',
-          status: response.status,
+          status: mediaResponse.status,
         },
-        { status: 502 },
+        {
+          status: 502,
+        },
       )
     }
 
-    const contentType =
-      response.headers.get('content-type') ?? 'application/octet-stream'
+    const contentType = mediaResponse.headers.get('content-type') ?? ''
 
-    const contentLength = response.headers.get('content-length')
-
-    const headers = new Headers()
-
-    headers.set('Content-Type', contentType)
+    const arrayBuffer = await mediaResponse.arrayBuffer()
+    const inputBuffer = Buffer.from(arrayBuffer)
 
     /*
-     * Cache hasil media di CDN.
+     * Detect HEIC/HEIF.
      *
-     * Notion URL boleh expired, tetapi browser/Vercel hanya
-     * menggunakan URL /api/notion-media yang permanen.
+     * iPhone images may arrive with MIME types such as:
+     *
+     * image/heic
+     * image/heif
+     * image/heic-sequence
+     * image/heif-sequence
+     *
+     * We also inspect the URL because MIME metadata isn't
+     * always consistent.
      */
-    headers.set(
-      'Cache-Control',
-      'public, s-maxage=3600, stale-while-revalidate=86400',
-    )
+    const lowerContentType = contentType.toLowerCase()
+    const lowerMediaUrl = mediaUrl.toLowerCase()
 
-    if (contentLength) {
-      headers.set('Content-Length', contentLength)
+    const isHeic =
+      lowerContentType.includes('image/heic') ||
+      lowerContentType.includes('image/heif') ||
+      lowerMediaUrl.includes('.heic') ||
+      lowerMediaUrl.includes('.heif')
+
+    /*
+     * HEIC → JPEG
+     *
+     * The browser receives image/jpeg instead of image/heic.
+     */
+    if (isHeic) {
+      try {
+        const jpegBuffer = await convert({
+          buffer: inputBuffer,
+          format: 'JPEG',
+          quality: 0.9,
+        })
+
+        return new NextResponse(jpegBuffer as BodyInit, {
+          status: 200,
+          headers: {
+            'Content-Type': 'image/jpeg',
+
+            /*
+             * Cache converted result at Vercel's edge.
+             *
+             * The browser never needs to know about the
+             * temporary Notion URL.
+             */
+            'Cache-Control':
+              'public, s-maxage=3600, stale-while-revalidate=86400',
+
+            'Content-Length': jpegBuffer.length.toString(),
+          },
+        })
+      } catch (conversionError) {
+        console.error('HEIC conversion failed:', conversionError)
+
+        return NextResponse.json(
+          {
+            error: 'Failed to convert HEIC image',
+          },
+          {
+            status: 500,
+          },
+        )
+      }
     }
 
-    return new NextResponse(response.body, {
+    /*
+     * Normal JPEG/PNG/WebP/etc.
+     *
+     * No conversion required.
+     */
+    return new NextResponse(inputBuffer as BodyInit, {
       status: 200,
-      headers,
+      headers: {
+        'Content-Type': contentType || 'application/octet-stream',
+
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+
+        'Content-Length': inputBuffer.length.toString(),
+      },
     })
   } catch (error) {
     console.error('Notion media proxy error:', error)
 
     return NextResponse.json(
-      { error: 'Failed to retrieve media from Notion' },
-      { status: 500 },
+      {
+        error: 'Failed to retrieve media from Notion',
+      },
+      {
+        status: 500,
+      },
     )
   }
 }

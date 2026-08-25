@@ -97,10 +97,10 @@ function Caption({ items }: { items?: RichTextItem[] }) {
 }
 
 /**
- * Return an external media URL directly.
+ * Return an external URL directly.
  *
- * For files hosted by Notion, we intentionally DO NOT return
- * media.file.url because that URL is temporary.
+ * Notion-hosted files are intentionally NOT returned here
+ * because Notion's file.url is temporary.
  */
 function getExternalMediaUrl(media: any): string | null {
   if (!media) {
@@ -115,9 +115,10 @@ function getExternalMediaUrl(media: any): string | null {
 }
 
 /**
- * Return a permanent URL handled by our Next.js media proxy.
+ * Generate a permanent application URL for Notion-hosted media.
  *
- * The browser never receives Notion's temporary signed URL.
+ * The actual Notion signed URL is retrieved server-side
+ * by /api/notion-media.
  */
 function getNotionMediaUrl(blockId: string): string {
   return `/api/notion-media?blockId=${encodeURIComponent(blockId)}`
@@ -246,11 +247,17 @@ function Block({ block }: { block: any }) {
         <aside className="my-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
           <div className="flex gap-3">
             {data.icon?.type === 'emoji' && (
-              <span className="text-xl">{data.icon.emoji}</span>
+              <span className="shrink-0 text-xl">{data.icon.emoji}</span>
             )}
 
-            <div>
+            <div className="min-w-0 flex-1">
               <RichText items={data.rich_text} />
+
+              {block._children?.length > 0 && (
+                <div className="mt-2">
+                  <Blocks blocks={block._children} />
+                </div>
+              )}
             </div>
           </div>
         </aside>
@@ -275,10 +282,10 @@ function Block({ block }: { block: any }) {
     case 'image': {
       /*
        * External image:
-       * use the external URL directly.
+       * use its original URL.
        *
        * Notion-hosted image:
-       * use our permanent proxy URL.
+       * use our media proxy.
        */
       const externalUrl = getExternalMediaUrl(data)
 
@@ -306,8 +313,7 @@ function Block({ block }: { block: any }) {
       const externalUrl = getExternalMediaUrl(data)
 
       /*
-       * External videos such as YouTube should continue
-       * using their original URL.
+       * External video, e.g. YouTube.
        */
       if (externalUrl) {
         const embedUrl = getVideoEmbedUrl(externalUrl)
@@ -515,6 +521,9 @@ function Blocks({ blocks }: { blocks: any[] }) {
   while (index < blocks.length) {
     const block = blocks[index]
 
+    /*
+     * Group consecutive bulleted list items.
+     */
     if (block.type === 'bulleted_list_item') {
       const items = []
 
@@ -541,6 +550,9 @@ function Blocks({ blocks }: { blocks: any[] }) {
       continue
     }
 
+    /*
+     * Group consecutive numbered list items.
+     */
     if (block.type === 'numbered_list_item') {
       const items = []
 
@@ -583,53 +595,10 @@ function Blocks({ blocks }: { blocks: any[] }) {
   return <>{output}</>
 }
 
-async function hydrateBlocks(blocks: any[]): Promise<any[]> {
-  return Promise.all(
-    blocks.map(async (block) => {
-      if (!block.has_children) {
-        return block
-      }
-
-      try {
-        const children: any[] = []
-
-        let startCursor: string | undefined = undefined
-
-        do {
-          const response = await import('@/lib/notion').then(({ notion }) =>
-            notion.blocks.children.list({
-              block_id: block.id,
-              page_size: 100,
-              ...(startCursor ? { start_cursor: startCursor } : {}),
-            }),
-          )
-
-          children.push(...response.results)
-
-          startCursor = response.has_more
-            ? (response.next_cursor ?? undefined)
-            : undefined
-        } while (startCursor)
-
-        const hydratedChildren = await hydrateBlocks(children)
-
-        return {
-          ...block,
-          _children: hydratedChildren,
-        }
-      } catch {
-        return block
-      }
-    }),
-  )
-}
-
-export async function NotionContent({ blocks }: NotionContentProps) {
-  const hydratedBlocks = await hydrateBlocks(blocks)
-
+export function NotionContent({ blocks }: NotionContentProps) {
   return (
     <div className="prose-zinc prose max-w-none dark:prose-invert">
-      <Blocks blocks={hydratedBlocks} />
+      <Blocks blocks={blocks} />
     </div>
   )
 }

@@ -147,27 +147,13 @@ export async function getArticleBySlug(
 }
 
 /**
- * Get all blocks inside a Notion page.
+ * Get all children of a Notion block recursively.
  *
- * This is used by NotionContent.tsx to render
- * native Notion blocks such as:
- *
- * - paragraph
- * - heading
- * - image
- * - video
- * - file
- * - bookmark
- * - bulleted list
- * - numbered list
- * - quote
- * - callout
- * - code
- * - divider
- * - table
+ * This means NotionContent.tsx no longer needs to call
+ * the Notion API itself.
  */
-export async function getArticleBlocks(
-  pageId: string,
+async function getBlockChildren(
+  blockId: string,
 ): Promise<BlockObjectResponse[]> {
   const blocks: BlockObjectResponse[] = []
 
@@ -175,21 +161,41 @@ export async function getArticleBlocks(
 
   do {
     const response = await notion.blocks.children.list({
-      block_id: pageId,
+      block_id: blockId,
       page_size: 100,
       ...(cursor ? { start_cursor: cursor } : {}),
     })
 
     for (const block of response.results) {
-      if ('type' in block) {
-        blocks.push(block as BlockObjectResponse)
+      if (!('type' in block)) {
+        continue
       }
+
+      const typedBlock = block as BlockObjectResponse
+
+      if (typedBlock.has_children) {
+        const children = await getBlockChildren(typedBlock.id)
+
+        ;(typedBlock as any)._children = children
+      }
+
+      blocks.push(typedBlock)
     }
 
     cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
   } while (cursor)
 
   return blocks
+}
+
+/**
+ * Get all blocks inside a Notion page,
+ * including nested children.
+ */
+export async function getArticleBlocks(
+  pageId: string,
+): Promise<BlockObjectResponse[]> {
+  return getBlockChildren(pageId)
 }
 
 /**
