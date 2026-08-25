@@ -96,7 +96,13 @@ function Caption({ items }: { items?: RichTextItem[] }) {
   )
 }
 
-function getMediaUrl(media: any): string | null {
+/**
+ * Return an external media URL directly.
+ *
+ * For files hosted by Notion, we intentionally DO NOT return
+ * media.file.url because that URL is temporary.
+ */
+function getExternalMediaUrl(media: any): string | null {
   if (!media) {
     return null
   }
@@ -105,15 +111,16 @@ function getMediaUrl(media: any): string | null {
     return media.external?.url ?? null
   }
 
-  if (media.type === 'file') {
-    return media.file?.url ?? null
-  }
-
-  if (media.type === 'file_upload') {
-    return null
-  }
-
   return null
+}
+
+/**
+ * Return a permanent URL handled by our Next.js media proxy.
+ *
+ * The browser never receives Notion's temporary signed URL.
+ */
+function getNotionMediaUrl(blockId: string): string {
+  return `/api/notion-media?blockId=${encodeURIComponent(blockId)}`
 }
 
 function getVideoEmbedUrl(url: string): string | null {
@@ -266,11 +273,16 @@ function Block({ block }: { block: any }) {
       )
 
     case 'image': {
-      const url = getMediaUrl(data)
+      /*
+       * External image:
+       * use the external URL directly.
+       *
+       * Notion-hosted image:
+       * use our permanent proxy URL.
+       */
+      const externalUrl = getExternalMediaUrl(data)
 
-      if (!url) {
-        return null
-      }
+      const url = externalUrl ?? getNotionMediaUrl(block.id)
 
       return (
         <figure className="my-10">
@@ -282,6 +294,7 @@ function Block({ block }: { block: any }) {
                 .join('') ?? ''
             }
             className="h-auto w-full rounded-2xl"
+            loading="lazy"
           />
 
           <Caption items={data.caption} />
@@ -290,31 +303,50 @@ function Block({ block }: { block: any }) {
     }
 
     case 'video': {
-      const url = getMediaUrl(data)
+      const externalUrl = getExternalMediaUrl(data)
 
-      if (!url) {
-        return null
-      }
+      /*
+       * External videos such as YouTube should continue
+       * using their original URL.
+       */
+      if (externalUrl) {
+        const embedUrl = getVideoEmbedUrl(externalUrl)
 
-      const embedUrl = getVideoEmbedUrl(url)
+        if (embedUrl) {
+          return (
+            <figure className="my-10">
+              <div className="aspect-video overflow-hidden rounded-2xl">
+                <iframe
+                  src={embedUrl}
+                  title="Embedded video"
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
 
-      if (embedUrl) {
+              <Caption items={data.caption} />
+            </figure>
+          )
+        }
+
         return (
           <figure className="my-10">
-            <div className="aspect-video overflow-hidden rounded-2xl">
-              <iframe
-                src={embedUrl}
-                title="Embedded video"
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
+            <video
+              src={externalUrl}
+              controls
+              className="h-auto w-full rounded-2xl"
+            />
 
             <Caption items={data.caption} />
           </figure>
         )
       }
+
+      /*
+       * Notion-hosted video.
+       */
+      const url = getNotionMediaUrl(block.id)
 
       return (
         <figure className="my-10">
@@ -327,11 +359,9 @@ function Block({ block }: { block: any }) {
 
     case 'file':
     case 'pdf': {
-      const url = getMediaUrl(data)
+      const externalUrl = getExternalMediaUrl(data)
 
-      if (!url) {
-        return null
-      }
+      const url = externalUrl ?? getNotionMediaUrl(block.id)
 
       const name = data.name ?? 'Download file'
 
