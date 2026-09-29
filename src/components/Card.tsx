@@ -77,14 +77,30 @@ Card.Description = function CardDescription({
   )
 }
 
-Card.Cta = function CardCta({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500"
-    >
+Card.Cta = function CardCta({
+  children,
+  href,
+}: {
+  children: React.ReactNode
+  href?: React.ComponentPropsWithoutRef<typeof Link>['href']
+}) {
+  const content = (
+    <>
       {children}
       <ChevronRightIcon className="ml-1 h-4 w-4 stroke-current" />
+    </>
+  )
+
+  return href ? (
+    <Link
+      href={href}
+      className="relative z-30 mt-4 inline-flex items-center text-sm font-medium text-teal-500 transition hover:text-teal-600 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-500 dark:hover:text-teal-300"
+    >
+      {content}
+    </Link>
+  ) : (
+    <div aria-hidden="true" className="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500">
+      {content}
     </div>
   )
 }
