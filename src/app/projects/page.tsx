@@ -9,7 +9,6 @@ const projects = [
     description:
       'A learning platform for mindset, personal development, and critical thinking.',
     link: { href: 'https://aksioma-journey.com', label: 'aksioma-journey.com' },
-    logo: null,
   },
   {
     name: 'Aksioma Trader',
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
 export default function Projects() {
   return (
     <SimpleLayout
-      title="Things I’ve made trying to put my dent in the universe."
+      title="Things I’m building and learning from."
       intro="Some of the things I have built and am continuing to improve."
     >
       <ul

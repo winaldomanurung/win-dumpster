@@ -177,28 +177,28 @@ function Block({ block }: { block: any }) {
 
     case 'heading_1':
       return (
-        <h1>
+        <h1 id={block.id} className="scroll-mt-24">
           <RichText items={data.rich_text} />
         </h1>
       )
 
     case 'heading_2':
       return (
-        <h2>
+        <h2 id={block.id} className="scroll-mt-24">
           <RichText items={data.rich_text} />
         </h2>
       )
 
     case 'heading_3':
       return (
-        <h3>
+        <h3 id={block.id} className="scroll-mt-24">
           <RichText items={data.rich_text} />
         </h3>
       )
 
     case 'heading_4':
       return (
-        <h4>
+        <h4 id={block.id} className="scroll-mt-24">
           <RichText items={data.rich_text} />
         </h4>
       )

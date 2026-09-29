@@ -21,8 +21,9 @@ export const metadata: Metadata = {
     description: 'Engineering, technology, and personal writing by Winaldo Manurung.',
   },
   alternates: {
+    canonical: '/',
     types: {
-      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
+      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://win-dumpster.vercel.app'}/feed.xml`,
     },
   },
 }

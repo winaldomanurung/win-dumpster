@@ -25,9 +25,13 @@ function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 export function ArticleLayout({
   article,
   children,
+  headings = [],
+  related = [],
 }: {
   article: ArticleWithSlug
   children: React.ReactNode
+  headings?: { id: string; text: string }[]
+  related?: ArticleWithSlug[]
 }) {
   let router = useRouter()
   let { previousPathname } = useContext(AppContext)
@@ -59,10 +63,22 @@ export function ArticleLayout({
                 <span className="ml-3">{formatDate(article.date)}</span>
               </time>
             </header>
+            {headings.length > 1 && (
+              <nav aria-label="Table of contents" className="mt-8 rounded-xl border border-zinc-200 p-5 text-sm dark:border-zinc-700">
+                <h2 className="mb-3 font-semibold text-zinc-800 dark:text-zinc-100">On this page</h2>
+                <ol className="space-y-2">
+                  {headings.map((heading) => <li key={heading.id}><a className="text-teal-600 hover:underline dark:text-teal-400" href={`#${heading.id}`}>{heading.text}</a></li>)}
+                </ol>
+              </nav>
+            )}
             <Prose className="mt-8 text-justify" data-mdx-content>
               {children}
             </Prose>
           </article>
+          {related.length > 0 && <section aria-label="Related articles" className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-700">
+            <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Related articles</h2>
+            <ul className="mt-5 space-y-3">{related.map((item) => <li key={item.pageId}><a className="text-teal-600 hover:underline dark:text-teal-400" href={`/articles/${encodeURIComponent(item.slug)}`}>{item.title} →</a></li>)}</ul>
+          </section>}
         </div>
       </div>
     </Container>

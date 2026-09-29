@@ -1,4 +1,5 @@
 import { notion, NOTION_DATA_SOURCE_ID } from './notion'
+import { cache } from 'react'
 import type { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 
 export interface Article {
@@ -7,6 +8,10 @@ export interface Article {
   author: string
   date: string
   slug: string
+  category: string
+  tags: string[]
+  cover: string
+  featured: boolean
 }
 
 export interface ArticleWithSlug extends Article {
@@ -25,6 +30,9 @@ type NotionProperty = {
   select?: {
     name: string
   } | null
+  multi_select?: Array<{ name: string }>
+  checkbox?: boolean
+  files?: Array<{ type: string; external?: { url: string }; file?: { url: string } }>
   date?: {
     start: string
   } | null
@@ -82,13 +90,17 @@ function mapNotionPage(page: any): ArticleWithSlug {
     date: getDateProperty(properties, 'Date'),
     slug: getTextProperty(properties, 'Slug'),
     pageId: page.id,
+    category: getTextProperty(properties, 'Category'),
+    tags: properties.Tags?.multi_select?.map((item) => item.name) ?? [],
+    cover: properties.Cover?.files?.find((file) => file.type === 'external')?.external?.url ?? '',
+    featured: properties.Featured?.checkbox ?? false,
   }
 }
 
 /**
  * Get all published articles.
  */
-export async function getAllArticles(): Promise<ArticleWithSlug[]> {
+export const getAllArticles = cache(async (): Promise<ArticleWithSlug[]> => {
   const results: ArticleWithSlug[] = []
   let cursor: string | undefined
 
@@ -113,14 +125,14 @@ export async function getAllArticles(): Promise<ArticleWithSlug[]> {
   } while (cursor)
 
   return results.filter((article) => article.slug && article.title)
-}
+})
 
 /**
  * Get a single published article by slug.
  */
-export async function getArticleBySlug(
+export const getArticleBySlug = cache(async (
   slug: string,
-): Promise<ArticleWithSlug | undefined> {
+): Promise<ArticleWithSlug | undefined> => {
   const response = await notion.dataSources.query({
     data_source_id: NOTION_DATA_SOURCE_ID!,
     filter: {
@@ -149,7 +161,7 @@ export async function getArticleBySlug(
   }
 
   return mapNotionPage(page)
-}
+})
 
 /**
  * Get all children of a Notion block recursively.
