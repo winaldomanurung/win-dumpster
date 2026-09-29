@@ -292,7 +292,7 @@ function Block({ block }: { block: any }) {
       const url = externalUrl ?? getNotionMediaUrl(block.id)
 
       return (
-        <figure className="my-10">
+        <figure className="notion-article-image my-10">
           <img
             src={url}
             alt={
@@ -300,8 +300,9 @@ function Block({ block }: { block: any }) {
                 ?.map((item: RichTextItem) => item.plain_text ?? '')
                 .join('') ?? ''
             }
-            className="h-auto w-full rounded-2xl"
+            className="notion-article-image-content rounded-2xl"
             loading="lazy"
+            decoding="async"
           />
 
           <Caption items={data.caption} />
