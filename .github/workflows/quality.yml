@@ -18,3 +18,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - run: npx next typegen
+        env:
+          NOTION_API_KEY: 'ci-placeholder'
+          NOTION_DATA_SOURCE_ID: '00000000-0000-0000-0000-000000000000'
+      - run: npx tsc --noEmit
