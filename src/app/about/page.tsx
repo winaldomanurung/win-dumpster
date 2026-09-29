@@ -1,146 +1,106 @@
-import { type Metadata } from 'next'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import clsx from 'clsx'
+import { ArrowUpRight, Mail, MapPin, Sparkles } from 'lucide-react'
 
 import { Container } from '@/components/Container'
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  XIcon,
-} from '@/components/SocialIcons'
+import { GitHubIcon, InstagramIcon, LinkedInIcon, XIcon } from '@/components/SocialIcons'
 import portraitImage from '@/images/portrait.jpg'
 
-function SocialLink({
-  className,
-  href,
-  children,
-  icon: Icon,
-}: {
-  className?: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  children: React.ReactNode
-}) {
-  return (
-    <li className={clsx(className, 'flex')}>
-      <Link
-        href={href}
-        className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
-      >
-        <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
-        <span className="ml-4">{children}</span>
-      </Link>
-    </li>
-  )
-}
-
-function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path
-        fillRule="evenodd"
-        d="M6 5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6Zm.245 2.187a.75.75 0 0 0-.99 1.126l6.25 5.5a.75.75 0 0 0 .99 0l6.25-5.5a.75.75 0 0 0-.99-1.126L12 12.251 6.245 7.187Z"
-      />
-    </svg>
-  )
-}
+const socialLinks = [
+  { label: 'X', href: 'https://x.com/winaldosatryadi', icon: XIcon },
+  { label: 'Instagram', href: 'https://www.instagram.com/winaldomanurung/', icon: InstagramIcon },
+  { label: 'GitHub', href: 'https://github.com/winaldomanurung', icon: GitHubIcon },
+  { label: 'LinkedIn', href: 'https://id.linkedin.com/in/winaldo-satryadi-manurung', icon: LinkedInIcon },
+]
 
 export const metadata: Metadata = {
   title: 'About',
-  description:
-    'I’m Winaldo Manurung, and this website is my dumpster where I share shit.',
+  description: 'The story behind Win Dumpster — engineering, building, and finding things worth remembering.',
+  alternates: { canonical: '/about' },
 }
 
 export default function About() {
   return (
-    <Container className="mt-16 sm:mt-32">
-      <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
-        <div className="lg:pl-20">
-          <div className="max-w-xs px-2.5 lg:max-w-none">
-            <Image
-              src={portraitImage}
-              alt=""
-              sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rotate-3 rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
-            />
-          </div>
-        </div>
-        <div className="lg:order-first lg:row-span-2">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-            I’m Winaldo, and this website is my dumpster where I share shit.
-          </h1>
-          <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
-            <p>
-              I’ve always loved making things from scratch. That curiosity
-              eventually led me to become an engineer—not just to understand how
-              things work, but to build things of my own.
+    <>
+      <Container className="mt-9">
+        <header className="interior-hero relative overflow-hidden rounded-3xl px-6 py-9 sm:px-9 sm:py-12 lg:px-12 lg:py-14">
+          <div aria-hidden="true" className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full border border-teal-500/15 sm:h-[420px] sm:w-[420px]" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-12 -top-12 h-52 w-52 rounded-full border border-teal-500/15 sm:h-[290px] sm:w-[290px]" />
+          <div className="relative max-w-2xl">
+            <p className="mb-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[.18em] text-teal-700 dark:text-teal-300">
+              <Sparkles size={16} strokeWidth={1.8} aria-hidden="true" />
+              The person behind the notes
             </p>
-            <p>
-              I also enjoy coding and experimenting with JavaScript to bring my
-              ideas to life. These days, though, I don’t get as much screen time
-              as I used to, so I like to joke that I only retain about 20% of my
-              coding skills. But I still enjoy building things whenever I get
-              the chance.
-            </p>
-            <p>
-              Professionally, I’m pursuing a career in the transportation
-              industry, currently working as a facility supervisor. My work sits
-              at the intersection of engineering, operations, and
-              problem-solving—areas where I’m constantly learning something new.
-            </p>
-            <p>
-              The past few years have also been a journey of recovery and
-              rebuilding. Now, I’m looking forward to challenging myself again
-              through running, cycling, and eventually joining a marathon. More
-              than just a race, I see these challenges as a way to remind myself
-              that the body and mind are capable of recovering, adapting, and
-              becoming stronger.
-            </p>
-            <p>
-              And somewhere between building things, fixing things, running, and
-              figuring out what comes next, I’m still searching for the meaning
-              of life. I haven’t found the answer yet.
+            <h1 className="text-4xl font-bold leading-[1.14] tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-100">
+              Hello, I’m Winaldo<span className="text-teal-600 dark:text-teal-300">.</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-base leading-8 text-zinc-600 dark:text-zinc-300">
+              Engineer by profession, builder by curiosity, and an archivist at heart. This little corner of the internet is where I keep the things I don’t want to forget.
             </p>
           </div>
+        </header>
+      </Container>
+
+      <Container className="mt-10 sm:mt-14">
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,.8fr)] lg:gap-14">
+          <article className="min-w-0">
+            <div className="mb-7 flex items-center gap-3 border-b border-zinc-200 pb-5 dark:border-zinc-700/70">
+              <span className="about-section-icon flex h-10 w-10 items-center justify-center rounded-xl"><Sparkles size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[.17em] text-teal-600 dark:text-teal-400">A little backstory</p>
+                <h2 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">A work in progress.</h2>
+              </div>
+            </div>
+            <div className="space-y-6 text-base leading-8 text-zinc-600 dark:text-zinc-300">
+              <p>I’ve always loved making things from scratch. That curiosity eventually led me to become an engineer—not just to understand how things work, but to build things of my own.</p>
+              <p>I also enjoy coding and experimenting with JavaScript to bring my ideas to life. These days, though, I don’t get as much screen time as I used to, so I like to joke that I only retain about 20% of my coding skills. But I still enjoy building things whenever I get the chance.</p>
+              <p>Professionally, I’m pursuing a career in the transportation industry, currently working as a facility supervisor. My work sits at the intersection of engineering, operations, and problem-solving—areas where I’m constantly learning something new.</p>
+              <p>The past few years have also been a journey of recovery and rebuilding. Now, I’m looking forward to challenging myself again through running, cycling, and eventually joining a marathon. More than just a race, I see these challenges as a way to remind myself that the body and mind are capable of recovering, adapting, and becoming stronger.</p>
+              <p>And somewhere between building things, fixing things, running, and figuring out what comes next, I’m still searching for the meaning of life. I haven’t found the answer yet.</p>
+            </div>
+          </article>
+
+          <aside className="space-y-6">
+            <div className="interior-panel overflow-hidden rounded-2xl p-3 sm:p-4">
+              <Image
+                src={portraitImage}
+                alt="Portrait of Winaldo"
+                sizes="(min-width: 1024px) 24rem, (min-width: 640px) 28rem, 100vw"
+                className="aspect-[4/4.3] w-full rounded-xl object-cover"
+                priority
+              />
+              <div className="flex items-center gap-2 px-2 pb-1 pt-4 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <MapPin size={15} aria-hidden="true" className="text-teal-600 dark:text-teal-400" />
+                Tangerang, Indonesia
+              </div>
+            </div>
+
+            <div className="interior-panel rounded-2xl p-6">
+              <h2 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Find me elsewhere</h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-500 dark:text-zinc-400">Other places to follow along or say hello.</p>
+              <ul role="list" className="mt-5 space-y-1">
+                {socialLinks.map(({ label, href, icon: Icon }) => (
+                  <li key={label}>
+                    <Link href={href} target="_blank" rel="noopener noreferrer" className="about-social-link group flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                      <Icon className="h-5 w-5 shrink-0 fill-current text-zinc-500 dark:text-zinc-400" aria-hidden="true" />
+                      <span className="flex-1">{label}</span>
+                      <ArrowUpRight size={16} className="text-teal-600 dark:text-teal-400" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+                <li className="border-t border-zinc-200 pt-3 dark:border-zinc-700/70">
+                  <Link href="mailto:winaldo.dump@gmail.com" className="about-social-link group flex min-w-0 items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                    <Mail size={19} className="shrink-0 text-zinc-500 dark:text-zinc-400" aria-hidden="true" />
+                    <span className="min-w-0 flex-1 break-all">winaldo.dump@gmail.com</span>
+                    <ArrowUpRight size={16} className="shrink-0 text-teal-600 dark:text-teal-400" aria-hidden="true" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </aside>
         </div>
-        <div className="lg:pl-20">
-          <ul role="list">
-            <SocialLink href="https://x.com/winaldosatryadi" icon={XIcon}>
-              Follow on X
-            </SocialLink>
-            <SocialLink
-              href="https://www.instagram.com/winaldomanurung/"
-              icon={InstagramIcon}
-              className="mt-4"
-            >
-              Follow on Instagram
-            </SocialLink>
-            <SocialLink
-              href="https://github.com/winaldomanurung"
-              icon={GitHubIcon}
-              className="mt-4"
-            >
-              Follow on GitHub
-            </SocialLink>
-            <SocialLink
-              href="https://id.linkedin.com/in/winaldo-satryadi-manurung"
-              icon={LinkedInIcon}
-              className="mt-4"
-            >
-              Follow on LinkedIn
-            </SocialLink>
-            <SocialLink
-              href="mailto:winaldo.dump@gmail.com"
-              icon={MailIcon}
-              className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
-            >
-              winaldo.dump@gmail.com
-            </SocialLink>
-          </ul>
-        </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }
