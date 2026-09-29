@@ -261,9 +261,6 @@ function Interests() {
                   <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                     {interest.description}
                   </p>
-                  <div className="interest-footer mt-5 border-t pt-3.5 text-[11px] tracking-[.1em] uppercase">
-                    An ongoing curiosity
-                  </div>
                 </div>
               </div>
             )
