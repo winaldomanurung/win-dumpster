@@ -1,12 +1,12 @@
 import { type Metadata } from 'next'
-import { Agdasima } from 'next/font/google'
+import { Varela } from 'next/font/google'
 
 import { Providers } from '@/app/providers'
 import { Layout } from '@/components/Layout'
 
 import '@/styles/tailwind.css'
 
-const agdasima = Agdasima({ subsets: ['latin'], weight: ['400', '700'], display: 'swap', variable: '--font-agdasima' })
+const varela = Varela({ subsets: ['latin'], weight: '400', display: 'swap', variable: '--font-varela' })
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className={`${agdasima.variable} flex h-full bg-zinc-50 dark:bg-black`}>
+      <body className={`${varela.variable} ${varela.className} flex h-full bg-zinc-50 dark:bg-black`}>
         <Providers>
           <div className="flex w-full">
             <Layout>{children}</Layout>
