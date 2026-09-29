@@ -89,25 +89,30 @@ function mapNotionPage(page: any): ArticleWithSlug {
  * Get all published articles.
  */
 export async function getAllArticles(): Promise<ArticleWithSlug[]> {
-  const response = await notion.dataSources.query({
-    data_source_id: NOTION_DATA_SOURCE_ID!,
-    filter: {
-      property: 'Status',
-      select: {
-        equals: 'Published',
-      },
-    },
-    sorts: [
-      {
-        property: 'Date',
-        direction: 'descending',
-      },
-    ],
-  })
+  const results: ArticleWithSlug[] = []
+  let cursor: string | undefined
 
-  return response.results
-    .filter((page): page is any => 'properties' in page)
-    .map(mapNotionPage)
+  do {
+    const response = await notion.dataSources.query({
+      data_source_id: NOTION_DATA_SOURCE_ID!,
+      filter: {
+        property: 'Status',
+        select: { equals: 'Published' },
+      },
+      sorts: [{ property: 'Date', direction: 'descending' }],
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    })
+
+    results.push(
+      ...response.results
+        .filter((page): page is any => 'properties' in page)
+        .map(mapNotionPage),
+    )
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
+  } while (cursor)
+
+  return results.filter((article) => article.slug && article.title)
 }
 
 /**
