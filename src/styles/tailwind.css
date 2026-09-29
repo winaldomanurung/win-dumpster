@@ -7,7 +7,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: var(--font-agdasima), 'Segoe UI', Arial, sans-serif;
+  --font-sans: var(--font-varela), 'Segoe UI', Arial, sans-serif;
   --color-teal-50: #f0f9ff;
   --color-teal-100: #e0f2fe;
   --color-teal-200: #b9e5fb;
@@ -47,7 +47,7 @@
   --text-9xl--line-height: 1;
 }
 
-html { font-family: var(--font-agdasima), 'Segoe UI', Arial, sans-serif; }
+html { font-family: var(--font-varela), 'Segoe UI', Arial, sans-serif; }
 button, input, select, textarea { font: inherit; }
 
 /* Homepage-only presentation styles; article search and shared theme are unchanged. */
