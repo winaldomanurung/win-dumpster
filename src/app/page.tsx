@@ -53,7 +53,7 @@ function Article({ article, index }: { article: ArticleWithSlug; index: number }
         <Card.Title href={`/articles/${encodeURIComponent(article.slug)}`}>{article.title}</Card.Title>
       </div>
       <Card.Description>{article.description}</Card.Description>
-      <Card.Cta>Read article</Card.Cta>
+      <Card.Cta href={`/articles/${encodeURIComponent(article.slug)}`}>Read article</Card.Cta>
     </Card>
   )
 }
