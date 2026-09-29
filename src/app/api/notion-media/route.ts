@@ -108,8 +108,8 @@ export async function GET(request: NextRequest) {
     /*
      * FILE
      */
-    if (block.type === 'file') {
-      const media = block.file
+    if (block.type === 'file' || block.type === 'pdf') {
+      const media = block.type === 'pdf' ? block.pdf : block.file
 
       if (media.type === 'file') {
         mediaUrl = media.file.url
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
 
     const contentType = mediaResponse.headers.get('content-type') ?? ''
     const contentLength = Number(mediaResponse.headers.get('content-length') || 0)
-    const isStream = block.type === 'video' || block.type === 'file'
+    const isStream = block.type === 'video' || block.type === 'file' || block.type === 'pdf'
     if (!isStream && contentLength > 25 * 1024 * 1024) {
       await mediaResponse.body?.cancel()
       return NextResponse.json({ error: 'Media exceeds proxy size limit' }, { status: 413 })
