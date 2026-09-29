@@ -133,7 +133,6 @@ export async function GET(request: NextRequest) {
      */
     const mediaResponse = await fetch(mediaUrl, {
       cache: 'no-store',
-      redirect: 'error',
       headers: request.headers.has('range')
         ? { Range: request.headers.get('range')! }
         : undefined,

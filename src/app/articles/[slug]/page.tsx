@@ -60,6 +60,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     headline: article.title, description: article.description,
     mainEntityOfPage: `${origin}/articles/${encodeURIComponent(article.slug)}`,
     author: { '@type': 'Person', name: article.author || 'Winaldo Manurung' },
+    publisher: { '@type': 'Person', name: 'Winaldo Manurung' },
     ...(article.date ? { datePublished: article.date } : {}),
     ...(article.cover ? { image: article.cover } : {}),
   }

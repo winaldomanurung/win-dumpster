@@ -4,8 +4,7 @@ import { getAllArticles } from '@/lib/articles'
 export const revalidate = 300
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
-  if (!siteUrl) return new Response('Site URL is not configured', { status: 500 })
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://win-dumpster.vercel.app').replace(/\/$/, '')
 
   const author = { name: 'Winaldo Manurung' }
   const feed = new Feed({
