@@ -72,10 +72,6 @@ export async function GET(request: NextRequest) {
     if (block.type === 'image') {
       const media = block.image
 
-      if (media.type === 'external') {
-        mediaUrl = media.external.url
-      }
-
       if (media.type === 'file') {
         mediaUrl = media.file.url
       }
@@ -86,10 +82,6 @@ export async function GET(request: NextRequest) {
      */
     if (block.type === 'video') {
       const media = block.video
-
-      if (media.type === 'external') {
-        mediaUrl = media.external.url
-      }
 
       if (media.type === 'file') {
         mediaUrl = media.file.url
@@ -102,15 +94,12 @@ export async function GET(request: NextRequest) {
     if (block.type === 'file') {
       const media = block.file
 
-      if (media.type === 'external') {
-        mediaUrl = media.external.url
-      }
-
       if (media.type === 'file') {
         mediaUrl = media.file.url
       }
     }
 
+    // External media is rendered directly by NotionContent; proxy only Notion-hosted files.
     if (!mediaUrl) {
       return NextResponse.json(
         {
@@ -144,8 +133,16 @@ export async function GET(request: NextRequest) {
     }
 
     const contentType = mediaResponse.headers.get('content-type') ?? ''
+    const contentLength = Number(mediaResponse.headers.get('content-length') || 0)
+    if (contentLength > 25 * 1024 * 1024) {
+      await mediaResponse.body?.cancel()
+      return NextResponse.json({ error: 'Media exceeds proxy size limit' }, { status: 413 })
+    }
 
     const arrayBuffer = await mediaResponse.arrayBuffer()
+    if (arrayBuffer.byteLength > 25 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Media exceeds proxy size limit' }, { status: 413 })
+    }
     const inputBuffer = Buffer.from(arrayBuffer)
 
     /*
