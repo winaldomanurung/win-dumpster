@@ -1,4 +1,4 @@
-// import { verifyWebhookSignature } from '@notionhq/client'
+import { verifyWebhookSignature } from '@notionhq/client'
 // import { revalidatePath } from 'next/cache'
 // import { NextResponse } from 'next/server'
 
@@ -64,7 +64,8 @@
 //     case 'page.undeleted':
 //     case 'page.moved':
 //     case 'data_source.content_updated':
-//       revalidatePath('/articles')
+//       revalidatePath('/')
+  revalidatePath('/articles')
 //       revalidatePath('/articles/[slug]', 'page')
 //       break
 
@@ -89,10 +90,7 @@ export async function POST(request: Request) {
     const payload = JSON.parse(body)
 
     if (payload.verification_token) {
-      console.log(
-        'NOTION WEBHOOK VERIFICATION TOKEN:',
-        payload.verification_token,
-      )
+      // Configure the verification token privately; never log it.
 
       return NextResponse.json({ received: true })
     }
