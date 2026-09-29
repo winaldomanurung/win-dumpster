@@ -1,5 +1,9 @@
+import Image, { type ImageProps } from 'next/image'
 import Link from 'next/link'
-import Image from 'next/image'
+import clsx from 'clsx'
+
+import { Button } from '@/components/Button'
+import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import {
   GitHubIcon,
@@ -10,157 +14,320 @@ import {
 import logoAngkasapura from '@/images/logos/angkasapura.png'
 import logoGmf from '@/images/logos/gmf.png'
 import logoInjourney from '@/images/logos/injourney.png'
-import { getAllArticles } from '@/lib/articles'
+import image1 from '@/images/photos/image-1.jpg'
+import image2 from '@/images/photos/image-2.jpg'
+import image3 from '@/images/photos/image-3.jpg'
+import image4 from '@/images/photos/image-4.jpg'
+import image5 from '@/images/photos/image-5.jpg'
+import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
 import { formatDate } from '@/lib/formatDate'
 
-export const revalidate = 300
-
-const socialLinks = [
-  { label: 'X', href: 'https://x.com/winaldosatryadi', icon: XIcon },
-  { label: 'Instagram', href: 'https://www.instagram.com/winaldomanurung/', icon: InstagramIcon },
-  { label: 'GitHub', href: 'https://github.com/winaldomanurung', icon: GitHubIcon },
-  { label: 'LinkedIn', href: 'https://id.linkedin.com/in/winaldo-satryadi-manurung', icon: LinkedInIcon },
-]
-
-const roles = [
-  { company: 'InJourney Airports', title: 'Mechanical Supervisor', years: '2026 — Now', logo: logoInjourney },
-  { company: 'InJourney Airports', title: 'Mechanical Engineer', years: '2024 — 2026', logo: logoInjourney },
-  { company: 'Angkasa Pura II', title: 'Mechanical Engineer', years: '2022 — 2024', logo: logoAngkasapura },
-  { company: 'Angkasa Pura II', title: 'Mechanical Technician', years: '2019 — 2022', logo: logoAngkasapura },
-  { company: 'GMF AeroAsia', title: 'Development Engineer', years: '2016 — 2019', logo: logoGmf },
-]
-
-function Arrow({ diagonal = false }: { diagonal?: boolean }) {
-  return <span aria-hidden="true" className="text-lg leading-none">{diagonal ? '↗' : '→'}</span>
+function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M2.75 7.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
+        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
+      />
+      <path
+        d="m4 6 6.024 5.479a2.915 2.915 0 0 0 3.952 0L20 6"
+        className="stroke-zinc-400 dark:stroke-zinc-500"
+      />
+    </svg>
+  )
 }
 
-function Interests() {
+function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
-    <section aria-labelledby="curiosity-title" className="relative mt-24 sm:mt-32">
-      <Container>
-        <div className="mb-8 flex flex-col justify-between gap-4 sm:mb-10 sm:flex-row sm:items-end">
-          <div>
-            <p className="editorial-kicker mb-4"><span className="editorial-dot" /> The curiosity index / 01</p>
-            <h2 id="curiosity-title" className="editorial-heading max-w-2xl text-4xl leading-[1.08] sm:text-5xl">
-              More than a job.<br /><em className="text-[var(--accent)]">A way of looking at things.</em>
-            </h2>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M2.75 9.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
+        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
+      />
+      <path
+        d="M3 14.25h6.249c.484 0 .952-.002 1.316.319l.777.682a.996.996 0 0 0 1.316 0l.777-.682c.364-.32.832-.319 1.316-.319H21M8.75 6.5V4.75a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2V6.5"
+        className="stroke-zinc-400 dark:stroke-zinc-500"
+      />
+    </svg>
+  )
+}
+
+function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M4.75 8.75 8 12.25m0 0 3.25-3.5M8 12.25v-8.5"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function Article({ article }: { article: ArticleWithSlug }) {
+  return (
+    <Card as="article">
+      <Card.Title href={`/articles/${article.slug}`}>
+        {article.title}
+      </Card.Title>
+      <Card.Eyebrow as="time" dateTime={article.date} decorate>
+        {formatDate(article.date)}
+      </Card.Eyebrow>
+      <Card.Description>{article.description}</Card.Description>
+      <Card.Cta>Read article</Card.Cta>
+    </Card>
+  )
+}
+
+function SocialLink({
+  icon: Icon,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Link> & {
+  icon: React.ComponentType<{ className?: string }>
+}) {
+  return (
+    <Link className="group -m-1 p-1" {...props}>
+      <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
+    </Link>
+  )
+}
+
+function Newsletter() {
+  return (
+    <form
+      action="/thank-you"
+      className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
+    >
+      <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <MailIcon className="h-6 w-6 flex-none" />
+        <span className="ml-3">Stay up to date</span>
+      </h2>
+      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        Get notified when I publish something new, and unsubscribe at any time.
+      </p>
+      <div className="mt-6 flex items-center">
+        <span className="flex min-w-0 flex-auto p-px">
+          <input
+            type="email"
+            placeholder="Email address"
+            aria-label="Email address"
+            required
+            className="w-full appearance-none rounded-[calc(var(--radius-md)-1px)] bg-white px-3 py-[calc(--spacing(2)-1px)] shadow-md shadow-zinc-800/5 outline outline-zinc-900/10 placeholder:text-zinc-400 focus:ring-4 focus:ring-teal-500/10 focus:outline-teal-500 sm:text-sm dark:bg-zinc-700/15 dark:text-zinc-200 dark:outline-zinc-700 dark:placeholder:text-zinc-500 dark:focus:ring-teal-400/10 dark:focus:outline-teal-400"
+          />
+        </span>
+        <Button type="submit" className="ml-4 flex-none">
+          Join
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+interface Role {
+  company: string
+  title: string
+  logo: ImageProps['src']
+  start: string | { label: string; dateTime: string }
+  end: string | { label: string; dateTime: string }
+}
+
+function Role({ role }: { role: Role }) {
+  let startLabel =
+    typeof role.start === 'string' ? role.start : role.start.label
+  let startDate =
+    typeof role.start === 'string' ? role.start : role.start.dateTime
+
+  let endLabel = typeof role.end === 'string' ? role.end : role.end.label
+  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
+
+  return (
+    <li className="flex gap-4">
+      <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md ring-1 shadow-zinc-800/5 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
+        <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
+      </div>
+      <dl className="flex flex-auto flex-wrap gap-x-2">
+        <dt className="sr-only">Company</dt>
+        <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          {role.company}
+        </dd>
+        <dt className="sr-only">Role</dt>
+        <dd className="text-xs text-zinc-500 dark:text-zinc-400">
+          {role.title}
+        </dd>
+        <dt className="sr-only">Date</dt>
+        <dd
+          className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
+          aria-label={`${startLabel} until ${endLabel}`}
+        >
+          <time dateTime={startDate}>{startLabel}</time>{' '}
+          <span aria-hidden="true">—</span>{' '}
+          <time dateTime={endDate}>{endLabel}</time>
+        </dd>
+      </dl>
+    </li>
+  )
+}
+
+function Resume() {
+  let resume: Array<Role> = [
+    {
+      company: 'Injourney Airports',
+      title: 'Mechanical Supervisor',
+      logo: logoInjourney,
+      start: '2026',
+      end: {
+        label: 'Present',
+        dateTime: new Date().getFullYear().toString(),
+      },
+    },
+    {
+      company: 'Injourney Airports',
+      title: 'Mechanical Engineer',
+      logo: logoInjourney,
+      start: '2024',
+      end: '2026',
+    },
+    {
+      company: 'Angkasa Pura II',
+      title: 'Mechanical Engineer',
+      logo: logoAngkasapura,
+      start: '2022',
+      end: '2024',
+    },
+    {
+      company: 'Angkasa Pura II',
+      title: 'Mechanical Technician',
+      logo: logoAngkasapura,
+      start: '2019',
+      end: '2022',
+    },
+    {
+      company: 'GMF Aeroasia',
+      title: 'Development Engineer',
+      logo: logoGmf,
+      start: '2016',
+      end: '2019',
+    },
+  ]
+
+  return (
+    <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
+      <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <BriefcaseIcon className="h-6 w-6 flex-none" />
+        <span className="ml-3">Work</span>
+      </h2>
+      <ol className="mt-6 space-y-4">
+        {resume.map((role, roleIndex) => (
+          <Role key={roleIndex} role={role} />
+        ))}
+      </ol>
+      {/* <Button href="#" variant="secondary" className="group mt-6 w-full">
+        Download CV
+        <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" />
+      </Button> */}
+    </div>
+  )
+}
+
+function Photos() {
+  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+
+  return (
+    <div className="mt-16 sm:mt-20">
+      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
+        {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
+          <div
+            key={image.src}
+            className={clsx(
+              'relative w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-72 sm:rounded-2xl dark:bg-zinc-800',
+              rotations[imageIndex % rotations.length],
+            )}
+          >
+            <div className="aspect-9/10">
+              <Image
+                src={image}
+                alt=""
+                sizes="(min-width: 640px) 18rem, 11rem"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
           </div>
-          <p className="max-w-xs text-sm leading-7 text-zinc-600 dark:text-zinc-400">A few corners of my world: the work, the experiments, and the things that keep me curious.</p>
-        </div>
-        <div className="editorial-bento">
-          <Link href="/articles" className="editorial-panel editorial-panel-feature group relative flex min-h-72 flex-col justify-between overflow-hidden p-7 sm:min-h-96 sm:p-10">
-            <div className="pointer-events-none absolute -right-16 -bottom-24 h-72 w-72 rounded-full border border-white/20 sm:h-96 sm:w-96" />
-            <div className="pointer-events-none absolute -right-5 -bottom-16 h-56 w-56 rounded-full border border-white/20 sm:h-80 sm:w-80" />
-            <div className="pointer-events-none absolute right-12 bottom-3 h-36 w-36 rounded-full border border-white/20 sm:h-56 sm:w-56" />
-            <div className="relative flex items-center justify-between">
-              <span className="editorial-kicker !text-white/70">Field notes · Engineering</span>
-              <span className="editorial-arrow !border-white/30 !text-white"><Arrow diagonal /></span>
-            </div>
-            <div className="relative max-w-lg">
-              <span className="mb-4 inline-block text-sm text-white/70">01 / Systems & problem solving</span>
-              <h3 className="editorial-heading text-4xl leading-[1.08] text-white sm:text-6xl">The art of<br /><em>figuring it out.</em></h3>
-              <p className="mt-5 max-w-sm text-sm leading-7 text-white/80">Machines, maintenance, and lessons learned from keeping complex things running.</p>
-            </div>
-          </Link>
-          <Link href="/projects" className="editorial-panel editorial-panel-project group relative flex min-h-60 flex-col justify-between p-7 sm:p-8">
-            <div className="flex items-center justify-between"><span className="editorial-kicker">02 / Building</span><span className="editorial-arrow"><Arrow diagonal /></span></div>
-            <div className="relative my-5 flex h-20 items-center gap-2" aria-hidden="true">
-              <span className="editorial-block h-12 w-12 -rotate-12 rounded-2xl" />
-              <span className="editorial-block h-16 w-16 rotate-12 rounded-2xl opacity-70" />
-              <span className="editorial-block h-10 w-10 -rotate-6 rounded-full opacity-40" />
-            </div>
-            <div><h3 className="editorial-heading text-3xl">Ideas into things.</h3><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">Code, experiments, and side projects.</p></div>
-          </Link>
-          <Link href="/about" className="editorial-panel editorial-panel-life group relative flex min-h-60 flex-col justify-between overflow-hidden p-7 sm:p-8">
-            <div className="flex items-center justify-between"><span className="editorial-kicker">03 / Beyond the desk</span><span className="editorial-arrow"><Arrow diagonal /></span></div>
-            <div className="relative my-5" aria-hidden="true"><svg viewBox="0 0 280 95" className="h-20 w-full max-w-72 fill-none" preserveAspectRatio="xMidYMid meet"><path d="M2 75 48 48 76 61 112 13 158 76 192 37 232 65 277 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--accent)]"/><path d="M2 90H278" stroke="currentColor" strokeOpacity=".18" strokeDasharray="4 7"/><circle cx="277" cy="8" r="5" fill="currentColor" className="text-[var(--accent)]"/></svg></div>
-            <div><h3 className="editorial-heading text-3xl">Keep moving.</h3><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">Life, endurance, and the long way around.</p></div>
-          </Link>
-        </div>
-        <div className="mt-5 flex items-center justify-between gap-4 text-xs tracking-[.14em] text-zinc-500 dark:text-zinc-400">
-          <span>CURIOUS BY DEFAULT</span><span className="h-px flex-1 bg-zinc-300/70 dark:bg-zinc-700/70" /><span>ALWAYS IN PROGRESS ↗</span>
-        </div>
-      </Container>
-    </section>
+        ))}
+      </div>
+    </div>
   )
 }
 
 export default async function Home() {
-  const articles = (await getAllArticles()).slice(0, 4)
+  let articles = (await getAllArticles()).slice(0, 4)
 
   return (
-    <main className="pb-6">
-      <Container className="relative mt-10 sm:mt-16">
-        <div className="editorial-hero relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20">
-          <div className="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full border border-[var(--accent)]/20" />
-          <div className="pointer-events-none absolute -right-36 bottom-0 h-80 w-80 rounded-full border border-[var(--accent)]/15" />
-          <div className="relative max-w-3xl">
-            <p className="editorial-kicker mb-7"><span className="editorial-dot" /> Winaldo Manurung / Personal archive</p>
-            <h1 className="editorial-heading text-[clamp(3.2rem,7vw,6.7rem)] leading-[.98] tracking-[-.055em]">
-              Engineer by profession.<br /><em className="text-[var(--accent)]">Builder by curiosity.</em>
-            </h1>
-            <p className="mt-8 max-w-xl text-base leading-8 text-zinc-600 sm:text-lg dark:text-zinc-300">
-              A little corner of the internet for the things I build, the problems I solve, and the ideas I do not want to forget.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/articles" className="editorial-cta">Explore my writing <Arrow diagonal /></Link>
-              <Link href="/about" className="editorial-cta-secondary">The story so far <Arrow /></Link>
-            </div>
-          </div>
-          <div className="relative mt-14 flex flex-wrap items-center justify-between gap-5 border-t border-zinc-300/60 pt-5 dark:border-zinc-700/70">
-            <span className="text-xs font-medium tracking-[.14em] text-zinc-500 dark:text-zinc-400">TANGERANG, INDONESIA · EST. IN CURIOSITY</span>
-            <div className="flex items-center gap-4">
-              {socialLinks.map(({ label, href, icon: Icon }) => (
-                <Link key={label} href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className="text-zinc-500 transition hover:text-[var(--accent)] dark:text-zinc-400 dark:hover:text-[var(--accent)]"><Icon className="h-5 w-5 fill-current" /></Link>
-              ))}
-            </div>
+    <>
+      <Container className="mt-9">
+        <div className="max-w-2xl">
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+            Engineer by profession, builder by curiosity.
+          </h1>
+          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+            I’m Winaldo, an engineer based in Tangerang, Indonesia. I spend my
+            time working in the transportation industry, building things with
+            code, while occasionally running and cycling. I’m also an archivist
+            at heart—I love documenting ideas, experiences, projects, and the
+            little things that might otherwise be forgotten. I’m currently
+            focused on growing my career, continuing my education, and figuring
+            out what kind of person I want to become along the way.
+          </p>
+          <div className="mt-6 flex gap-6">
+            <SocialLink href="https://x.com/winaldosatryadi" aria-label="Follow on X" icon={XIcon} />
+            <SocialLink
+              href="https://www.instagram.com/winaldomanurung/"
+              aria-label="Follow on Instagram"
+              icon={InstagramIcon}
+            />
+            <SocialLink
+              href="https://github.com/winaldomanurung"
+              aria-label="Follow on GitHub"
+              icon={GitHubIcon}
+            />
+            <SocialLink
+              href="https://id.linkedin.com/in/winaldo-satryadi-manurung"
+              aria-label="Follow on LinkedIn"
+              icon={LinkedInIcon}
+            />
           </div>
         </div>
       </Container>
-
-      <Interests />
-
-      <Container className="mt-24 sm:mt-32">
-        <div className="mb-8 flex items-end justify-between gap-4 border-b border-zinc-300/60 pb-5 dark:border-zinc-700/70">
-          <div><p className="editorial-kicker mb-3"><span className="editorial-dot" /> From the archive / 02</p><h2 className="editorial-heading text-4xl sm:text-5xl">Latest <em className="text-[var(--accent)]">writing.</em></h2></div>
-          <Link href="/articles" className="shrink-0 text-sm font-semibold text-[var(--accent)] hover:underline">All articles ↗</Link>
-        </div>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(270px,1fr)] lg:gap-12">
-          <div className="min-w-0">
-            {articles.length ? (
-              <ol className="divide-y divide-zinc-300/60 dark:divide-zinc-700/70">
-                {articles.map((article, index) => (
-                  <li key={article.pageId}>
-                    <Link href={`/articles/${encodeURIComponent(article.slug)}`} className="group flex gap-4 py-6 first:pt-2 sm:gap-6">
-                      <span className="pt-1 font-mono text-xs text-[var(--accent)]">{String(index + 1).padStart(2, '0')}</span>
-                      <div className="min-w-0 flex-1">
-                        <p className="mb-2 text-xs tracking-[.07em] text-zinc-500 dark:text-zinc-400">{article.category || 'Journal'}{article.date ? ` · ${formatDate(article.date)}` : ''}</p>
-                        <h3 className="editorial-heading text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">{article.title}</h3>
-                        <p className="mt-2 line-clamp-2 text-sm leading-7 text-zinc-600 dark:text-zinc-400">{article.description}</p>
-                      </div>
-                      <span aria-hidden="true" className="mt-1 text-xl text-[var(--accent)] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            ) : <p className="py-10 text-zinc-600 dark:text-zinc-400">The archive is taking shape. Check back for new writing.</p>}
+      <Photos />
+      <Container className="mt-24 md:mt-28">
+        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
+          <div className="flex flex-col gap-16">
+            {articles.map((article) => (
+              <Article key={article.slug} article={article} />
+            ))}
           </div>
-          <aside className="editorial-resume rounded-3xl p-6 sm:p-8">
-            <div className="flex items-center justify-between gap-3"><span className="editorial-kicker">Currently & previously</span><span className="text-xl text-[var(--accent)]">✳</span></div>
-            <h3 className="editorial-heading mt-5 text-3xl">The working <em>years.</em></h3>
-            <ol className="mt-7 space-y-5">
-              {roles.map((role, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-800"><Image src={role.logo} alt="" className="max-h-7 w-auto object-contain" /></span>
-                  <div className="min-w-0 flex-1"><p className="text-sm font-semibold leading-5 text-zinc-900 dark:text-zinc-100">{role.title}</p><p className="text-xs text-zinc-500 dark:text-zinc-400">{role.company}</p></div>
-                  <span className="shrink-0 text-right font-mono text-[10px] text-zinc-500 dark:text-zinc-400">{role.years}</span>
-                </li>
-              ))}
-            </ol>
-            <Link href="/about" className="mt-8 flex items-center justify-between border-t border-zinc-300/70 pt-5 text-sm font-semibold text-[var(--accent)] transition hover:gap-4 dark:border-zinc-700">A little more about me <Arrow diagonal /></Link>
-          </aside>
+          <div className="space-y-10 lg:pl-16 xl:pl-24">
+            {/* <Newsletter /> */}
+            <Resume />
+          </div>
         </div>
       </Container>
-    </main>
+    </>
   )
 }
