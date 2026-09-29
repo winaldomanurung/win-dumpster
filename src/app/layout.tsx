@@ -1,12 +1,12 @@
 import { type Metadata } from 'next'
-import { Geist } from 'next/font/google'
+import { Agdasima } from 'next/font/google'
 
 import { Providers } from '@/app/providers'
 import { Layout } from '@/components/Layout'
 
 import '@/styles/tailwind.css'
 
-const geist = Geist({ subsets: ['latin'], display: 'swap', variable: '--font-geist' })
+const agdasima = Agdasima({ subsets: ['latin'], weight: ['400', '700'], display: 'swap', variable: '--font-agdasima' })
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className={`${geist.variable} flex h-full bg-zinc-50 dark:bg-black`}>
+      <body className={`${agdasima.variable} flex h-full bg-zinc-50 dark:bg-black`}>
         <Providers>
           <div className="flex w-full">
             <Layout>{children}</Layout>
