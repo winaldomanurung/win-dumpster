@@ -286,11 +286,11 @@ export default async function Home() {
             Engineer by profession, builder by curiosity.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm Winaldo, an engineer based in Tangerang, Indonesia. I spend my
+            I’m Winaldo, an engineer based in Tangerang, Indonesia. I spend my
             time working in the transportation industry, building things with
-            code, while occasionally running and cycling. I'm also an archivist
+            code, while occasionally running and cycling. I’m also an archivist
             at heart—I love documenting ideas, experiences, projects, and the
-            little things that might otherwise be forgotten. I'm currently
+            little things that might otherwise be forgotten. I’m currently
             focused on growing my career, continuing my education, and figuring
             out what kind of person I want to become along the way.
           </p>
