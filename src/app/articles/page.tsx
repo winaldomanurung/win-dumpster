@@ -103,7 +103,12 @@ export default async function ArticlesIndex({ searchParams }: { searchParams: Se
                   </Link>
                 </h3>
                 <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{article.description}</p>
-                <span aria-hidden="true" className="interior-cta mt-auto flex items-center gap-2 pt-6 text-xs font-semibold">Read article <ArrowUpRight size={16} /></span>
+                <Link
+                  href={`/articles/${encodeURIComponent(article.slug)}`}
+                  className="interior-cta relative z-20 mt-auto inline-flex w-fit items-center gap-2 pt-6 text-xs font-semibold outline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-500"
+                >
+                  Read article <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
               </article>
             ))}
           </div>
