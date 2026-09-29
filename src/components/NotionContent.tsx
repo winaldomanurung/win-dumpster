@@ -471,7 +471,7 @@ function Block({ block }: { block: any }) {
         <div className="my-8 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <tbody>
-              {data.children?.map((child: any) => (
+              {block._children?.map((child: any) => (
                 <Block key={child.id} block={child} />
               ))}
             </tbody>
@@ -538,11 +538,10 @@ function Blocks({ blocks }: { blocks: any[] }) {
       output.push(
         <ul key={`ul-${block.id}`}>
           {items.map((item) => (
-            <React.Fragment key={item.id}>
-              <Block block={item} />
-
+            <li key={item.id}>
+              <RichText items={item[item.type]?.rich_text} />
               {item._children?.length > 0 && <Blocks blocks={item._children} />}
-            </React.Fragment>
+            </li>
           ))}
         </ul>,
       )
@@ -567,11 +566,10 @@ function Blocks({ blocks }: { blocks: any[] }) {
       output.push(
         <ol key={`ol-${block.id}`}>
           {items.map((item) => (
-            <React.Fragment key={item.id}>
-              <Block block={item} />
-
+            <li key={item.id}>
+              <RichText items={item[item.type]?.rich_text} />
               {item._children?.length > 0 && <Blocks blocks={item._children} />}
-            </React.Fragment>
+            </li>
           ))}
         </ol>,
       )
@@ -585,7 +583,7 @@ function Blocks({ blocks }: { blocks: any[] }) {
 
         {block._children?.length > 0 &&
           block.type !== 'toggle' &&
-          block.type !== 'table' && <Blocks blocks={block._children} />}
+          block.type !== 'table' && block.type !== 'callout' && <Blocks blocks={block._children} />}
       </React.Fragment>,
     )
 
