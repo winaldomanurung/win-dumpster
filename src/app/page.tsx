@@ -1,5 +1,6 @@
 import Image, { type ImageProps } from 'next/image'
 import Link from 'next/link'
+import { Wrench, Code2, BrainCircuit, Compass, ArrowUpRight, ArrowRight } from 'lucide-react'
 
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
@@ -234,188 +235,119 @@ function Resume() {
       </ol>
       {/* <Button href="#" variant="secondary" className="group mt-6 w-full">
         Download CV
-        <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" />
-      </Button> */}
-    </div>
-  )
-}
-
-type InterestIconName = 'engineering' | 'building' | 'thinking' | 'exploring'
-
-// Lucide-style 24px icon geometry. Keeping these four icons local avoids
-// introducing an extra dependency solely for the homepage.
-function InterestIcon({ name, className = '' }: { name: InterestIconName; className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      aria-hidden="true"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {name === 'engineering' && (
-        <>
-          <path d="M14.7 6.3a3 3 0 0 0-4 4L2.4 18.6a2 2 0 0 0 2.8 2.8l8.3-8.3a3 3 0 0 0 4-4l-3 3-2.8-2.8 3-3Z" />
-          <path d="m5 20 1-1" />
-        </>
-      )}
-      {name === 'building' && (
-        <>
-          <path d="m16 18 6-6-6-6" />
-          <path d="m8 6-6 6 6 6" />
-          <path d="m14.5 4-5 16" />
-        </>
-      )}
-      {name === 'thinking' && (
-        <>
-          <path d="M12 18V5" />
-          <path d="M15 13a4.2 4.2 0 0 1-3-4 4.2 4.2 0 0 1-3 4" />
-          <path d="M7.5 6.5a4 4 0 0 0-5.1 5.7A4 4 0 0 0 4 19a4 4 0 0 0 8-1" />
-          <path d="M16.5 6.5a4 4 0 0 1 5.1 5.7A4 4 0 0 1 20 19a4 4 0 0 1-8-1" />
-          <path d="M7 10a3 3 0 0 0-3 3m13-3a3 3 0 0 1 3 3" />
-        </>
-      )}
-      {name === 'exploring' && (
-        <>
-          <circle cx="12" cy="12" r="9" />
-          <path d="m16.2 7.8-2.8 5.6-5.6 2.8 2.8-5.6 5.6-2.8Z" />
-          <path d="M12 3v2m0 14v2M3 12h2m14 0h2" />
-        </>
-      )}
-    </svg>
-  )
-}
-
-const interests: {
-  number: string
-  name: string
-  description: string
-  icon: InterestIconName
-  label: string
-  accent: string
-  darkAccent: string
-  surface: string
-  darkSurface: string
-  keyword: string
-}[] = [
+        <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hoconst interests = [
   {
     number: '01',
-    name: 'Engineering',
+    title: 'Engineering',
     description: 'Finding clarity in complex systems and real-world problems.',
-    icon: 'engineering',
-    label: 'Browse engineering articles',
-    accent: '#336b68',
-    darkAccent: '#a6d4cd',
-    surface: '#e5efeb',
-    darkSurface: '#263c3c',
-    keyword: 'SOLVE',
+    icon: Wrench,
+    category: 'Engineering',
+    tone: 'teal',
+    detail: 'Systems / Reliability',
   },
   {
     number: '02',
-    name: 'Building',
+    title: 'Building',
     description: 'Turning little ideas into things people can actually use.',
-    icon: 'building',
-    label: 'Browse building articles',
-    accent: '#655a91',
-    darkAccent: '#c4b8f4',
-    surface: '#edebf5',
-    darkSurface: '#343248',
-    keyword: 'CREATE',
+    icon: Code2,
+    category: 'Building',
+    tone: 'violet',
+    detail: 'Code / Experiments',
   },
   {
     number: '03',
-    name: 'Thinking',
+    title: 'Thinking',
     description: 'Questioning assumptions and learning to see differently.',
-    icon: 'thinking',
-    label: 'Browse thinking articles',
-    accent: '#a36343',
-    darkAccent: '#edbb9c',
-    surface: '#f3ebe5',
-    darkSurface: '#42312c',
-    keyword: 'QUESTION',
+    icon: BrainCircuit,
+    category: 'Thinking',
+    tone: 'amber',
+    detail: 'Ideas / Perspectives',
   },
   {
     number: '04',
-    name: 'Exploring',
+    title: 'Exploring',
     description: 'Collecting perspectives beyond the desk and the routine.',
-    icon: 'exploring',
-    label: 'Browse exploring articles',
-    accent: '#577a59',
-    darkAccent: '#b9d4b5',
-    surface: '#eaf0e5',
-    darkSurface: '#303e33',
-    keyword: 'DISCOVER',
+    icon: Compass,
+    category: 'Exploring',
+    tone: 'sage',
+    detail: 'Life / Discovery',
   },
-]
+] as const
 
 function Interests() {
   return (
     <Container className="mt-16 sm:mt-20">
       <section aria-labelledby="interests-heading">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-3 sm:mb-9">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-4 sm:mb-9">
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400">
-              Beyond the resume
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-teal-600 dark:text-teal-400">
+              A little more about me
             </p>
             <h2
               id="interests-heading"
               className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl dark:text-zinc-100"
             >
-              Things that drive me<span className="text-teal-500">.</span>
+              Driven by curiosity<span className="text-teal-500">.</span>
             </h2>
           </div>
           <p className="max-w-xs text-sm leading-6 text-zinc-500 dark:text-zinc-400">
-            Four different interests. One common thread: curiosity.
+            Four interests, one constant: there is always more to learn.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {interests.map((interest) => (
-            <Link
-              key={interest.number}
-              href={`/articles?category=${encodeURIComponent(interest.name)}`}
-              aria-label={interest.label}
-              style={{
-                '--interest-accent': interest.accent,
-                '--interest-accent-dark': interest.darkAccent,
-                '--interest-surface': interest.surface,
-                '--interest-surface-dark': interest.darkSurface,
-              } as React.CSSProperties}
-              className="interest-card group relative isolate flex min-h-[284px] flex-col overflow-hidden rounded-[1.65rem] border border-zinc-200/80 bg-white px-7 pt-7 pb-6 shadow-[0_2px_12px_rgba(30,40,40,0.035)] outline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-500 sm:min-h-[310px] sm:px-8 sm:pt-8 dark:border-zinc-700/70 dark:bg-[#202326]"
-            >
-              <span aria-hidden="true" className="interest-art absolute top-0 right-0 h-[210px] w-[220px] sm:h-[240px] sm:w-[260px]">
-                <span className="interest-art-surface absolute -top-20 -right-14 h-[280px] w-[280px] rounded-full sm:h-[320px] sm:w-[320px]" />
-                <span className="interest-art-ring absolute top-7 right-3 h-44 w-44 rounded-full border sm:h-52 sm:w-52" />
-                <span className="interest-art-ring interest-art-ring-inner absolute top-17 right-13 h-24 w-24 rounded-full border sm:top-18 sm:right-17 sm:h-28 sm:w-28" />
-                <span className="interest-art-symbol absolute top-15 right-13 flex h-22 w-22 items-center justify-center rounded-[1.7rem] sm:top-18 sm:right-17 sm:h-28 sm:w-28">
-                  <InterestIcon name={interest.icon} className="h-11 w-11 sm:h-14 sm:w-14" />
-                </span>
-              </span>
-              <div className="relative z-10 flex items-start justify-between gap-4">
-                <span className="interest-index font-mono text-xs font-medium tracking-[0.13em]">
-                  THE INDEX / {interest.number}
-                </span>
-                <span aria-hidden="true" className="interest-top-arrow flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-200/80 bg-white/80 text-lg text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-100">
-                  ↗
-                </span>
-              </div>
-              <div className="relative z-10 mt-auto max-w-[85%] pt-28 sm:pt-32">
-                <span className="interest-keyword mb-3 block text-[10px] font-semibold tracking-[0.22em]">
-                  {interest.keyword} / {interest.number}
-                </span>
-                <h3 className="text-[1.85rem] leading-tight font-semibold tracking-tight text-zinc-900 sm:text-[2.1rem] dark:text-zinc-50">
-                  {interest.name}
-                </h3>
-                <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                  {interest.description}
-                </p>
-                <span className="interest-explore mt-5 inline-flex items-center gap-2 text-xs font-semibold tracking-wide">
-                  Browse articles <span aria-hidden="true">→</span>
-                </span>
-              </div>
-              <span aria-hidden="true" className="interest-card-bottom absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0" />
+          {interests.map((interest) => {
+            const Icon = interest.icon
+
+            return (
+              <Link
+                key={interest.number}
+                href={`/articles?category=${encodeURIComponent(interest.category)}`}
+                aria-label={`Browse ${interest.title} articles`}
+                data-tone={interest.tone}
+                className="interest-card group relative isolate flex min-h-[244px] flex-col overflow-hidden rounded-[22px] p-6 outline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-500 sm:min-h-[260px] sm:p-7"
+              >
+                <div className="interest-wash pointer-events-none absolute inset-0" aria-hidden="true" />
+                <div className="relative z-10 flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="interest-icon flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-2xl">
+                      <Icon size={25} strokeWidth={1.7} aria-hidden="true" />
+                    </span>
+                    <span className="interest-index font-mono text-[11px] tracking-[.12em]">
+                      {interest.number} <span className="opacity-40">/</span> 04
+                    </span>
+                  </div>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    size={21}
+                    strokeWidth={1.6}
+                    className="interest-diagonal mt-1 shrink-0"
+                  />
+                </div>
+                <div className="relative z-10 mt-auto max-w-md pt-9">
+                  <p className="interest-detail mb-2 text-[10px] font-semibold uppercase tracking-[.18em]">
+                    {interest.detail}
+                  </p>
+                  <h3 className="text-[1.75rem] font-semibold leading-tight tracking-[-.035em] text-zinc-900 sm:text-[2rem] dark:text-zinc-50">
+                    {interest.title}
+                  </h3>
+                  <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    {interest.description}
+                  </p>
+                  <div className="interest-footer mt-5 flex items-center justify-between border-t pt-3.5">
+                    <span className="text-xs font-semibold tracking-wide">Read the stories</span>
+                    <ArrowRight className="interest-forward" size={17} strokeWidth={1.8} aria-hidden="true" />
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
+    </Container>
+  )
+}
+
+ />
             </Link>
           ))}
         </div>
