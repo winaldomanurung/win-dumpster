@@ -332,3 +332,30 @@ button, input, select, textarea { font: inherit; }
 .about-social-link { transition: background-color .2s ease, color .2s ease; }
 .about-social-link:hover, .about-social-link:focus-visible { background: #e7f4fd; color: #09699f; }
 .dark .about-social-link:hover, .dark .about-social-link:focus-visible { background: #2b4355; color: #9bd9ff; }
+
+/* Notion article media: preserve portrait/landscape ratios without giant images. */
+.prose .notion-article-image {
+  width: 100%;
+  max-width: 100%;
+  margin-block: 2.5rem;
+  text-align: center;
+}
+.prose .notion-article-image-content {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(68vh, 540px);
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 1rem;
+}
+.prose .notion-article-image figcaption {
+  max-width: 36rem;
+  margin: .75rem auto 0;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .prose .notion-article-image { margin-block: 1.75rem; }
+  .prose .notion-article-image-content { max-height: min(62vh, 440px); }
+}
