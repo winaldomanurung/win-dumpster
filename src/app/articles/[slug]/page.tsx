@@ -54,7 +54,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     id: block.id,
     text: ('type' in block ? (block as any)[block.type]?.rich_text : [])?.map((item: any) => item.plain_text).join('') || '',
   })).filter((heading) => heading.text)
-  const origin = (process.env.NEXT_PUBLIC_SITE_URL || 'https://win-dumpster.vercel.app').replace(/\\/$/, '')
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || 'https://win-dumpster.vercel.app').replace(/\/$/, '')
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'BlogPosting',
     headline: article.title, description: article.description,

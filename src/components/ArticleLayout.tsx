@@ -55,13 +55,13 @@ export function ArticleLayout({
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
                 {article.title}
               </h1>
-              <time
+              {article.date && <time
                 dateTime={article.date}
                 className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
               >
                 <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
                 <span className="ml-3">{formatDate(article.date)}</span>
-              </time>
+              </time>}
             </header>
             {headings.length > 1 && (
               <nav aria-label="Table of contents" className="mt-8 rounded-xl border border-zinc-200 p-5 text-sm dark:border-zinc-700">

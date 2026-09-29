@@ -22,7 +22,8 @@ export default async function ArticlesIndex({ searchParams }: { searchParams: Se
     (!category || item.category === category) &&
     (!query || [item.title, item.description, item.category, ...item.tags].join(' ').toLowerCase().includes(query)),
   )
-  const page = Math.max(1, Math.min(10000, Number.parseInt(params.page || '1', 10) || 1))
+  const rawPage = Number.parseInt(params.page || '1', 10)
+  const page = Number.isFinite(rawPage) ? Math.max(1, Math.min(10000, rawPage)) : 1
   const totalPages = Math.max(1, Math.ceil(filtered.length / 10))
   const current = Math.min(page, totalPages)
   const results = filtered.slice((current - 1) * 10, current * 10)
