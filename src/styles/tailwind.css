@@ -34,3 +34,84 @@
   --text-9xl: 8rem;
   --text-9xl--line-height: 1;
 }
+
+/* Homepage interest cards: interactions are scoped to this section only. */
+.interest-card {
+  transition: transform 350ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 350ms ease, filter 350ms ease;
+  will-change: transform;
+}
+.interest-card:hover,
+.interest-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 45px -28px rgba(20, 35, 38, .36);
+}
+.dark .interest-card:hover,
+.dark .interest-card:focus-visible {
+  box-shadow: 0 24px 45px -28px rgba(0,0,0,.7);
+}
+.interest-icon {
+  transition: transform 400ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 350ms ease;
+}
+.interest-card:hover .interest-icon,
+.interest-card:focus-visible .interest-icon {
+  transform: translateY(-4px) rotate(-7deg) scale(1.07);
+  box-shadow: 0 12px 24px -13px rgba(15, 23, 42, .32);
+}
+.interest-orbit {
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1),
+    opacity 350ms ease;
+}
+.interest-card:hover .interest-orbit,
+.interest-card:focus-visible .interest-orbit {
+  transform: translate(-20px, 18px) rotate(26deg) scale(1.08);
+}
+.interest-glow {
+  background: currentColor;
+  transition: opacity 500ms ease, transform 700ms ease;
+}
+.interest-card:hover .interest-glow,
+.interest-card:focus-visible .interest-glow {
+  opacity: .13;
+  transform: translate(-15px, 20px);
+}
+.interest-line {
+  transition: width 350ms ease;
+}
+.interest-card:hover .interest-line,
+.interest-card:focus-visible .interest-line {
+  width: 4rem;
+}
+.interest-arrow {
+  transition: transform 300ms ease, background 300ms ease;
+}
+.interest-card:hover .interest-arrow,
+.interest-card:focus-visible .interest-arrow {
+  transform: translate(4px,-4px);
+  background: rgba(255,255,255,.7);
+}
+.dark .interest-card:hover .interest-arrow,
+.dark .interest-card:focus-visible .interest-arrow {
+  background: rgba(255,255,255,.12);
+}
+.interest-edge {
+  transition: transform 450ms cubic-bezier(.2,.8,.2,1);
+}
+.interest-card:hover .interest-edge,
+.interest-card:focus-visible .interest-edge {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .interest-card, .interest-icon, .interest-orbit, .interest-glow,
+  .interest-line, .interest-arrow, .interest-edge {
+    transition: none !important;
+    animation: none !important;
+    will-change: auto;
+  }
+  .interest-card:hover, .interest-card:focus-visible,
+  .interest-card:hover .interest-icon, .interest-card:focus-visible .interest-icon,
+  .interest-card:hover .interest-arrow, .interest-card:focus-visible .interest-arrow {
+    transform: none;
+  }
+}
