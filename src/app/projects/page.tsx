@@ -69,10 +69,16 @@ export default function Projects() {
                     </Link>
                   </h2>
                   <p className="mt-3 max-w-sm text-sm leading-7 text-zinc-600 dark:text-zinc-400">{project.description}</p>
-                  <div className="interior-project-divider mt-6 flex items-center justify-between gap-3 border-t pt-4">
+                  <Link
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit ${project.name} at ${project.label} (opens in a new tab)`}
+                    className="interior-project-divider relative z-20 mt-6 flex items-center justify-between gap-3 border-t pt-4 outline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-500"
+                  >
                     <span className="truncate text-xs font-medium text-zinc-500 dark:text-zinc-400">{project.label}</span>
                     <ArrowUpRight className="interior-project-arrow shrink-0" size={19} strokeWidth={1.7} aria-hidden="true" />
-                  </div>
+                  </Link>
                 </div>
               </li>
             )
