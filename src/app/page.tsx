@@ -1,6 +1,5 @@
 import Image, { type ImageProps } from 'next/image'
 import Link from 'next/link'
-import clsx from 'clsx'
 
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
@@ -14,11 +13,6 @@ import {
 import logoAngkasapura from '@/images/logos/angkasapura.png'
 import logoGmf from '@/images/logos/gmf.png'
 import logoInjourney from '@/images/logos/injourney.png'
-import image1 from '@/images/photos/image-1.jpg'
-import image2 from '@/images/photos/image-2.jpg'
-import image3 from '@/images/photos/image-3.jpg'
-import image4 from '@/images/photos/image-4.jpg'
-import image5 from '@/images/photos/image-5.jpg'
 import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
 import { formatDate } from '@/lib/formatDate'
 
@@ -246,32 +240,162 @@ function Resume() {
   )
 }
 
-function Photos() {
-  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+type InterestIconName = 'engineering' | 'building' | 'thinking' | 'exploring'
+
+function InterestIcon({ name }: { name: InterestIconName }) {
+  const common = {
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.5,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+  }
 
   return (
-    <div className="mt-16 sm:mt-20">
-      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
-          <div
-            key={image.src}
-            className={clsx(
-              'relative w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-72 sm:rounded-2xl dark:bg-zinc-800',
-              rotations[imageIndex % rotations.length],
-            )}
-          >
-            <div className="aspect-9/10">
-              <Image
-                src={image}
-                alt=""
-                sizes="(min-width: 640px) 18rem, 11rem"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
+    <svg viewBox="0 0 48 48" className="h-12 w-12" aria-hidden="true" {...common}>
+      {name === 'engineering' && (
+        <>
+          <path d="M19 7h10l1.6 5.1 4.8 2.8 5.2-1.1 5 8.6-3.5 4-0.1 5.6-4.1 4.1-5.6-.1-4 3.5-8.6-5-1.1-5.2-2.8-4.8L11 23V13l5.1-1.6z" transform="translate(-4 3) scale(.88)" />
+          <circle cx="24" cy="24" r="7" />
+          <path d="m21 25 3 3 6-7" />
+        </>
+      )}
+      {name === 'building' && (
+        <>
+          <rect x="6" y="9" width="36" height="28" rx="5" />
+          <path d="M6 17h36M14 13h.01M19 13h.01M14 23l5 5-5 5M23 33h10" />
+          <path d="M29 25h5M31.5 22.5v5" />
+        </>
+      )}
+      {name === 'thinking' && (
+        <>
+          <path d="M24 8c-8.7 0-15 6.7-15 15 0 6.3 3.4 10.5 8 13v4h14v-4c4.6-2.5 8-6.7 8-13 0-8.3-6.3-15-15-15Z" />
+          <path d="M19 44h10M18 23c2-4 4 4 6 0s4-4 6 0M24 8v6M9 23h6M33 23h6" />
+        </>
+      )}
+      {name === 'exploring' && (
+        <>
+          <path d="M5 37 17 17l7 10 6-8 13 18H5Z" />
+          <path d="m11 27 6 4 7-4 7 5 5-4" />
+          <circle cx="34" cy="11" r="4" />
+          <path d="M8 43h32" />
+        </>
+      )}
+    </svg>
+  )
+}
+
+const interests: {
+  number: string
+  name: string
+  description: string
+  icon: InterestIconName
+  href: string
+  color: string
+  iconColor: string
+  label: string
+}[] = [
+  {
+    number: '01',
+    name: 'Engineering',
+    description: 'Finding clarity in complex systems and real-world problems.',
+    icon: 'engineering',
+    href: '/articles?category=Engineering',
+    color: 'bg-[#e9efed] dark:bg-[#203439]',
+    iconColor: 'text-[#376c68] dark:text-[#9ad3c8]',
+    label: 'Explore engineering articles',
+  },
+  {
+    number: '02',
+    name: 'Building',
+    description: 'Turning little ideas into things people can actually use.',
+    icon: 'building',
+    href: '/projects',
+    color: 'bg-[#eae8f2] dark:bg-[#303047]',
+    iconColor: 'text-[#645b92] dark:text-[#c2b9f4]',
+    label: 'Explore my projects',
+  },
+  {
+    number: '03',
+    name: 'Thinking',
+    description: 'Questioning assumptions and learning to see differently.',
+    icon: 'thinking',
+    href: '/articles?q=thinking',
+    color: 'bg-[#f4ebe4] dark:bg-[#453029]',
+    iconColor: 'text-[#a26343] dark:text-[#efbd9e]',
+    label: 'Explore writing about thinking',
+  },
+  {
+    number: '04',
+    name: 'Exploring',
+    description: 'Collecting perspectives beyond the desk and the routine.',
+    icon: 'exploring',
+    href: '/about',
+    color: 'bg-[#e9eee4] dark:bg-[#303d32]',
+    iconColor: 'text-[#678357] dark:text-[#b5cda4]',
+    label: 'Read more about me',
+  },
+]
+
+function Interests() {
+  return (
+    <Container className="mt-16 sm:mt-20">
+      <section aria-labelledby="interests-heading">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-8">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400">
+              Beyond the resume
+            </p>
+            <h2
+              id="interests-heading"
+              className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl dark:text-zinc-100"
+            >
+              Things that drive me<span className="text-teal-500">.</span>
+            </h2>
           </div>
-        ))}
-      </div>
-    </div>
+          <p className="max-w-xs text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+            Four different interests. One common thread: curiosity.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-12">
+          {interests.map((interest, index) => (
+            <Link
+              key={interest.number}
+              href={interest.href}
+              aria-label={interest.label}
+              className={`group relative flex min-h-[230px] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-zinc-900/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-500 sm:min-h-[265px] sm:p-7 dark:ring-white/10 dark:hover:shadow-black/20 ${interest.color} ${
+                index === 0 || index === 3 ? 'lg:col-span-7' : 'lg:col-span-5'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <span className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/60 dark:bg-white/10 ${interest.iconColor}`}>
+                  <InterestIcon name={interest.icon} />
+                </span>
+                <span className="font-mono text-xs tracking-widest text-zinc-500/80 dark:text-zinc-400">
+                  {interest.number} / 04
+                </span>
+              </div>
+              <div className="mt-8 flex items-end justify-between gap-4">
+                <div className="max-w-sm">
+                  <h3 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-[1.8rem] dark:text-zinc-100">
+                    {interest.name}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    {interest.description}
+                  </p>
+                </div>
+                <span
+                  aria-hidden="true"
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/20 text-xl transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 ${interest.iconColor}`}
+                >
+                  ↗
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </Container>
   )
 }
 
@@ -314,7 +438,7 @@ export default async function Home() {
           </div>
         </div>
       </Container>
-      <Photos />
+      <Interests />
       <Container className="mt-24 md:mt-28">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
