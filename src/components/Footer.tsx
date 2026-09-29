@@ -12,7 +12,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="transition hover:text-teal-500 dark:hover:text-teal-400"
+      className="transition hover:text-[var(--accent)]"
     >
       {children}
     </Link>
@@ -21,13 +21,14 @@ function NavLink({
 
 export function Footer() {
   return (
-    <footer className="mt-32 flex-none">
+    <footer className="mt-32 flex-none bg-[#ede9e1]/70 dark:bg-[#1c2223]/80">
       <ContainerOuter>
-        <div className="border-t border-zinc-100 pt-10 pb-16 dark:border-zinc-700/40">
+        <div className="border-t border-zinc-300/60 pt-10 pb-16 dark:border-zinc-700/50">
           <ContainerInner>
             <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
                 <NavLink href="/about">About</NavLink>
+                <NavLink href="/articles">Articles</NavLink>
                 <NavLink href="/projects">Projects</NavLink>
                 <NavLink href="/uses">Uses</NavLink>
               </div>
