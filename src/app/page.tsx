@@ -243,44 +243,38 @@ function Resume() {
 type InterestIconName = 'engineering' | 'building' | 'thinking' | 'exploring'
 
 function InterestIcon({ name }: { name: InterestIconName }) {
-  const common = {
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: 1.5,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
+  const paths: Record<InterestIconName, React.ReactNode> = {
+    engineering: (
+      <>
+        <path d="M14.7 6.3a3 3 0 0 0-4 4L3 18l3 3 7.7-7.7a3 3 0 0 0 4-4l-2.8 2.8-2.1-2.1z" />
+        <path d="m6 18 1 1" />
+      </>
+    ),
+    building: (
+      <>
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M3 9h18M8 6.5h.01M11 6.5h.01M7 13l3 3-3 3M13 19h4" />
+      </>
+    ),
+    thinking: (
+      <>
+        <path d="M9 18h6M10 21h4M8 14c-1.3-1.1-2-2.7-2-4.5a6 6 0 1 1 12 0c0 1.8-.7 3.4-2 4.5-.7.6-1 1.3-1 2H9c0-.7-.3-1.4-1-2Z" />
+        <path d="m10 10 2 2 2-2" />
+      </>
+    ),
+    exploring: (
+      <>
+        <path d="m3 19 6.5-9 4.5 6 3-4 4 7H3Z" />
+        <circle cx="17.5" cy="5.5" r="2" />
+        <path d="M3 22h18" />
+      </>
+    ),
   }
 
   return (
-    <svg viewBox="0 0 48 48" className="h-12 w-12" aria-hidden="true" {...common}>
-      {name === 'engineering' && (
-        <>
-          <path d="M19 7h10l1.6 5.1 4.8 2.8 5.2-1.1 5 8.6-3.5 4-0.1 5.6-4.1 4.1-5.6-.1-4 3.5-8.6-5-1.1-5.2-2.8-4.8L11 23V13l5.1-1.6z" transform="translate(-4 3) scale(.88)" />
-          <circle cx="24" cy="24" r="7" />
-          <path d="m21 25 3 3 6-7" />
-        </>
-      )}
-      {name === 'building' && (
-        <>
-          <rect x="6" y="9" width="36" height="28" rx="5" />
-          <path d="M6 17h36M14 13h.01M19 13h.01M14 23l5 5-5 5M23 33h10" />
-          <path d="M29 25h5M31.5 22.5v5" />
-        </>
-      )}
-      {name === 'thinking' && (
-        <>
-          <path d="M24 8c-8.7 0-15 6.7-15 15 0 6.3 3.4 10.5 8 13v4h14v-4c4.6-2.5 8-6.7 8-13 0-8.3-6.3-15-15-15Z" />
-          <path d="M19 44h10M18 23c2-4 4 4 6 0s4-4 6 0M24 8v6M9 23h6M33 23h6" />
-        </>
-      )}
-      {name === 'exploring' && (
-        <>
-          <path d="M5 37 17 17l7 10 6-8 13 18H5Z" />
-          <path d="m11 27 6 4 7-4 7 5 5-4" />
-          <circle cx="34" cy="11" r="4" />
-          <path d="M8 43h32" />
-        </>
-      )}
+    <svg viewBox="0 0 24 24" className="h-9 w-9" aria-hidden="true" fill="none"
+      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {paths[name]}
     </svg>
   )
 }
@@ -290,7 +284,6 @@ const interests: {
   name: string
   description: string
   icon: InterestIconName
-  href: string
   color: string
   iconColor: string
   label: string
@@ -300,40 +293,36 @@ const interests: {
     name: 'Engineering',
     description: 'Finding clarity in complex systems and real-world problems.',
     icon: 'engineering',
-    href: '/articles?category=Engineering',
     color: 'bg-[#e9efed] dark:bg-[#203439]',
     iconColor: 'text-[#376c68] dark:text-[#9ad3c8]',
-    label: 'Explore engineering articles',
+    label: 'Browse engineering articles',
   },
   {
     number: '02',
     name: 'Building',
     description: 'Turning little ideas into things people can actually use.',
     icon: 'building',
-    href: '/projects',
     color: 'bg-[#eae8f2] dark:bg-[#303047]',
     iconColor: 'text-[#645b92] dark:text-[#c2b9f4]',
-    label: 'Explore my projects',
+    label: 'Browse building articles',
   },
   {
     number: '03',
     name: 'Thinking',
     description: 'Questioning assumptions and learning to see differently.',
     icon: 'thinking',
-    href: '/articles?q=thinking',
     color: 'bg-[#f4ebe4] dark:bg-[#453029]',
     iconColor: 'text-[#a26343] dark:text-[#efbd9e]',
-    label: 'Explore writing about thinking',
+    label: 'Browse thinking articles',
   },
   {
     number: '04',
     name: 'Exploring',
     description: 'Collecting perspectives beyond the desk and the routine.',
     icon: 'exploring',
-    href: '/about',
     color: 'bg-[#e9eee4] dark:bg-[#303d32]',
     iconColor: 'text-[#678357] dark:text-[#b5cda4]',
-    label: 'Read more about me',
+    label: 'Browse exploring articles',
   },
 ]
 
@@ -361,22 +350,28 @@ function Interests() {
           {interests.map((interest, index) => (
             <Link
               key={interest.number}
-              href={interest.href}
+              href={`/articles?category=${encodeURIComponent(interest.name)}`}
               aria-label={interest.label}
-              className={`group relative flex min-h-[230px] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-zinc-900/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-500 sm:min-h-[265px] sm:p-7 dark:ring-white/10 dark:hover:shadow-black/20 ${interest.color} ${
+              className={`interest-card group relative isolate flex min-h-[248px] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-zinc-900/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-500 sm:min-h-[278px] sm:p-7 dark:ring-white/10 ${interest.color} ${
                 index === 0 || index === 3 ? 'lg:col-span-7' : 'lg:col-span-5'
               }`}
             >
-              <div className="flex items-start justify-between">
-                <span className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/60 dark:bg-white/10 ${interest.iconColor}`}>
+              <span aria-hidden="true" className={`interest-orbit pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full border-2 border-current/10 ${interest.iconColor}`}>
+                <span className="absolute inset-7 rounded-full border border-current/15" />
+                <span className="absolute inset-16 rounded-full border border-current/15" />
+              </span>
+              <span aria-hidden="true" className={`interest-glow pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-0 blur-3xl ${interest.iconColor}`} />
+              <div className="relative z-10 flex items-start justify-between">
+                <span className={`interest-icon flex h-16 w-16 items-center justify-center rounded-2xl bg-white/65 ring-1 ring-white/50 shadow-sm dark:bg-white/10 dark:ring-white/10 ${interest.iconColor}`}>
                   <InterestIcon name={interest.icon} />
                 </span>
                 <span className="font-mono text-xs tracking-widest text-zinc-500/80 dark:text-zinc-400">
                   {interest.number} / 04
                 </span>
               </div>
-              <div className="mt-8 flex items-end justify-between gap-4">
+              <div className="relative z-10 mt-8 flex items-end justify-between gap-4">
                 <div className="max-w-sm">
+                  <span className={`interest-line mb-3 block h-0.5 w-8 rounded-full bg-current ${interest.iconColor}`} aria-hidden="true" />
                   <h3 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-[1.8rem] dark:text-zinc-100">
                     {interest.name}
                   </h3>
@@ -386,11 +381,12 @@ function Interests() {
                 </div>
                 <span
                   aria-hidden="true"
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/20 text-xl transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 ${interest.iconColor}`}
+                  className={`interest-arrow flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-current/25 bg-white/40 text-xl dark:bg-white/5 ${interest.iconColor}`}
                 >
                   ↗
                 </span>
               </div>
+              <span aria-hidden="true" className={`interest-edge absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-current ${interest.iconColor}`} />
             </Link>
           ))}
         </div>
