@@ -35,83 +35,112 @@
   --text-9xl--line-height: 1;
 }
 
-/* Homepage interest cards: interactions are scoped to this section only. */
+/* Interest cards: contained visual treatment; the rest of the site is unchanged. */
 .interest-card {
-  transition: transform 350ms cubic-bezier(.2,.8,.2,1),
-    box-shadow 350ms ease, filter 350ms ease;
-  will-change: transform;
+  --accent: var(--interest-accent);
+  --surface: var(--interest-surface);
+  transition: transform 420ms cubic-bezier(.22,1,.36,1),
+    border-color 320ms ease, box-shadow 420ms ease;
+}
+.dark .interest-card {
+  --accent: var(--interest-accent-dark);
+  --surface: var(--interest-surface-dark);
 }
 .interest-card:hover,
 .interest-card:focus-visible {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 45px -28px rgba(20, 35, 38, .36);
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--accent) 43%, transparent);
+  box-shadow: 0 24px 52px -27px rgba(28,36,41,.24);
 }
 .dark .interest-card:hover,
 .dark .interest-card:focus-visible {
-  box-shadow: 0 24px 45px -28px rgba(0,0,0,.7);
+  box-shadow: 0 25px 55px -28px rgba(0,0,0,.75);
 }
-.interest-icon {
-  transition: transform 400ms cubic-bezier(.2,.8,.2,1),
-    box-shadow 350ms ease;
+.interest-art-surface {
+  background: var(--surface);
+  transition: transform 600ms cubic-bezier(.22,1,.36,1);
 }
-.interest-card:hover .interest-icon,
-.interest-card:focus-visible .interest-icon {
-  transform: translateY(-4px) rotate(-7deg) scale(1.07);
-  box-shadow: 0 12px 24px -13px rgba(15, 23, 42, .32);
+.interest-art-ring {
+  border-color: color-mix(in srgb, var(--accent) 23%, transparent);
+  transition: transform 650ms cubic-bezier(.22,1,.36,1), opacity 400ms ease;
 }
-.interest-orbit {
-  transition: transform 700ms cubic-bezier(.2,.8,.2,1),
-    opacity 350ms ease;
+.interest-art-ring-inner {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--accent) 29%, transparent);
 }
-.interest-card:hover .interest-orbit,
-.interest-card:focus-visible .interest-orbit {
-  transform: translate(-20px, 18px) rotate(26deg) scale(1.08);
+.interest-art-symbol {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--surface) 42%, transparent);
+  transition: transform 550ms cubic-bezier(.22,1,.36,1);
 }
-.interest-glow {
-  background: currentColor;
-  transition: opacity 500ms ease, transform 700ms ease;
+.interest-card:hover .interest-art-surface,
+.interest-card:focus-visible .interest-art-surface {
+  transform: translate(-16px, 13px) scale(1.12);
 }
-.interest-card:hover .interest-glow,
-.interest-card:focus-visible .interest-glow {
-  opacity: .13;
-  transform: translate(-15px, 20px);
+.interest-card:hover .interest-art-ring,
+.interest-card:focus-visible .interest-art-ring {
+  transform: rotate(30deg) scale(1.07);
 }
-.interest-line {
-  transition: width 350ms ease;
+.interest-card:hover .interest-art-ring-inner,
+.interest-card:focus-visible .interest-art-ring-inner {
+  transform: rotate(-32deg) scale(.95);
 }
-.interest-card:hover .interest-line,
-.interest-card:focus-visible .interest-line {
-  width: 4rem;
+.interest-card:hover .interest-art-symbol,
+.interest-card:focus-visible .interest-art-symbol {
+  transform: translate(-5px, 3px) scale(1.08) rotate(-5deg);
 }
-.interest-arrow {
-  transition: transform 300ms ease, background 300ms ease;
+.interest-index { color: var(--accent); }
+.interest-keyword, .interest-explore { color: var(--accent); }
+.interest-top-arrow {
+  transition: transform 320ms cubic-bezier(.22,1,.36,1),
+    background-color 320ms ease, color 320ms ease;
 }
-.interest-card:hover .interest-arrow,
-.interest-card:focus-visible .interest-arrow {
-  transform: translate(4px,-4px);
-  background: rgba(255,255,255,.7);
+.interest-card:hover .interest-top-arrow,
+.interest-card:focus-visible .interest-top-arrow {
+  transform: translate(3px,-3px);
+  background: var(--accent);
+  color: #fff;
 }
-.dark .interest-card:hover .interest-arrow,
-.dark .interest-card:focus-visible .interest-arrow {
-  background: rgba(255,255,255,.12);
+.interest-explore span {
+  display: inline-block;
+  transition: transform 300ms ease;
 }
-.interest-edge {
-  transition: transform 450ms cubic-bezier(.2,.8,.2,1);
+.interest-card:hover .interest-explore span,
+.interest-card:focus-visible .interest-explore span {
+  transform: translateX(5px);
 }
-.interest-card:hover .interest-edge,
-.interest-card:focus-visible .interest-edge {
+.interest-card-bottom {
+  background: var(--accent);
+  transition: transform 500ms cubic-bezier(.22,1,.36,1);
+}
+.interest-card:hover .interest-card-bottom,
+.interest-card:focus-visible .interest-card-bottom {
   transform: scaleX(1);
 }
 @media (prefers-reduced-motion: reduce) {
-  .interest-card, .interest-icon, .interest-orbit, .interest-glow,
-  .interest-line, .interest-arrow, .interest-edge {
+  .interest-card,
+  .interest-art-surface,
+  .interest-art-ring,
+  .interest-art-symbol,
+  .interest-top-arrow,
+  .interest-explore span,
+  .interest-card-bottom {
     transition: none !important;
-    animation: none !important;
-    will-change: auto;
   }
-  .interest-card:hover, .interest-card:focus-visible,
-  .interest-card:hover .interest-icon, .interest-card:focus-visible .interest-icon,
-  .interest-card:hover .interest-arrow, .interest-card:focus-visible .interest-arrow {
+  .interest-card:hover,
+  .interest-card:focus-visible,
+  .interest-card:hover .interest-art-surface,
+  .interest-card:focus-visible .interest-art-surface,
+  .interest-card:hover .interest-art-ring,
+  .interest-card:focus-visible .interest-art-ring,
+  .interest-card:hover .interest-art-ring-inner,
+  .interest-card:focus-visible .interest-art-ring-inner,
+  .interest-card:hover .interest-art-symbol,
+  .interest-card:focus-visible .interest-art-symbol,
+  .interest-card:hover .interest-top-arrow,
+  .interest-card:focus-visible .interest-top-arrow,
+  .interest-card:hover .interest-explore span,
+  .interest-card:focus-visible .interest-explore span {
     transform: none;
   }
 }
