@@ -78,7 +78,7 @@ function MobileNavigation({ pathname }: { pathname: string }) {
           <PopoverPanel
             focus
             transition
-            className="site-mobile-panel absolute right-0 top-14 z-[60] w-[min(19rem,calc(100vw-2rem))] origin-top-right rounded-2xl p-3 shadow-2xl transition duration-200 data-closed:scale-95 data-closed:opacity-0"
+            className="site-mobile-panel absolute left-1/2 top-14 z-[60] w-[min(19rem,calc(100vw-2rem))] -translate-x-1/2 origin-top rounded-2xl p-3 shadow-2xl transition duration-200 data-closed:scale-95 data-closed:opacity-0"
           >
             <div className="mb-2 flex items-center justify-between px-3 py-2">
               <span className="text-xs font-bold uppercase tracking-[.18em] text-zinc-500 dark:text-zinc-400">Navigation</span>
