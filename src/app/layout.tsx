@@ -13,6 +13,13 @@ export const metadata: Metadata = {
   },
   description:
     'I’m Winaldo, an engineer based in Tangerang, Indonesia. I spend my time working in the transportation industry, building things with code, running, and cycling.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://win-dumpster.vercel.app'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Win Dumpster',
+    title: 'Win Dumpster — Winaldo Manurung',
+    description: 'Engineering, technology, and personal writing by Winaldo Manurung.',
+  },
   alternates: {
     types: {
       'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
