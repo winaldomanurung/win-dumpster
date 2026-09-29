@@ -1,8 +1,7 @@
 import Image, { type ImageProps } from 'next/image'
 import Link from 'next/link'
-import { Wrench, Code2, BrainCircuit, Compass, ArrowUpRight, ArrowRight } from 'lucide-react'
+import { Wrench, Code2, BrainCircuit, Compass, ArrowUpRight, ArrowRight, BookOpen, Sparkles } from 'lucide-react'
 
-import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import {
@@ -16,29 +15,6 @@ import logoGmf from '@/images/logos/gmf.png'
 import logoInjourney from '@/images/logos/injourney.png'
 import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
 import { formatDate } from '@/lib/formatDate'
-
-function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M2.75 7.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
-        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
-      />
-      <path
-        d="m4 6 6.024 5.479a2.915 2.915 0 0 0 3.952 0L20 6"
-        className="stroke-zinc-400 dark:stroke-zinc-500"
-      />
-    </svg>
-  )
-}
 
 function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -63,28 +39,19 @@ function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   )
 }
 
-function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+function Article({ article, index }: { article: ArticleWithSlug; index: number }) {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M4.75 8.75 8 12.25m0 0 3.25-3.5M8 12.25v-8.5"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function Article({ article }: { article: ArticleWithSlug }) {
-  return (
-    <Card as="article">
-      <Card.Title href={`/articles/${article.slug}`}>
-        {article.title}
-      </Card.Title>
-      <Card.Eyebrow as="time" dateTime={article.date} decorate>
-        {formatDate(article.date)}
+    <Card as="article" className="home-article group relative border-b border-zinc-200/80 py-6 first:pt-0 last:border-b-0 dark:border-zinc-700/70">
+      <span className="home-article-number absolute right-0 top-6 font-mono text-xs text-zinc-400 group-first:top-0 dark:text-zinc-500">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      <Card.Eyebrow as="div" decorate>
+        {article.category || 'Journal'}
+        {article.date ? <span className="ml-2">· {formatDate(article.date)}</span> : null}
       </Card.Eyebrow>
+      <div className="max-w-[calc(100%-2rem)]">
+        <Card.Title href={`/articles/${encodeURIComponent(article.slug)}`}>{article.title}</Card.Title>
+      </div>
       <Card.Description>{article.description}</Card.Description>
       <Card.Cta>Read article</Card.Cta>
     </Card>
@@ -101,37 +68,6 @@ function SocialLink({
     <Link className="group -m-1 p-1" {...props}>
       <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
     </Link>
-  )
-}
-
-function Newsletter() {
-  return (
-    <form
-      action="/thank-you"
-      className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
-    >
-      <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        <MailIcon className="h-6 w-6 flex-none" />
-        <span className="ml-3">Stay up to date</span>
-      </h2>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Get notified when I publish something new, and unsubscribe at any time.
-      </p>
-      <div className="mt-6 flex items-center">
-        <span className="flex min-w-0 flex-auto p-px">
-          <input
-            type="email"
-            placeholder="Email address"
-            aria-label="Email address"
-            required
-            className="w-full appearance-none rounded-[calc(var(--radius-md)-1px)] bg-white px-3 py-[calc(--spacing(2)-1px)] shadow-md shadow-zinc-800/5 outline outline-zinc-900/10 placeholder:text-zinc-400 focus:ring-4 focus:ring-teal-500/10 focus:outline-teal-500 sm:text-sm dark:bg-zinc-700/15 dark:text-zinc-200 dark:outline-zinc-700 dark:placeholder:text-zinc-500 dark:focus:ring-teal-400/10 dark:focus:outline-teal-400"
-          />
-        </span>
-        <Button type="submit" className="ml-4 flex-none">
-          Join
-        </Button>
-      </div>
-    </form>
   )
 }
 
@@ -301,12 +237,10 @@ function Interests() {
             const Icon = interest.icon
 
             return (
-              <Link
+              <div
                 key={interest.number}
-                href={`/articles?category=${encodeURIComponent(interest.category)}`}
-                aria-label={`Browse ${interest.title} articles`}
                 data-tone={interest.tone}
-                className="interest-card group relative isolate flex min-h-[244px] flex-col overflow-hidden rounded-[22px] p-6 outline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-500 sm:min-h-[260px] sm:p-7"
+                className="interest-card relative isolate flex min-h-[220px] flex-col overflow-hidden rounded-[22px] p-6 sm:min-h-[245px] sm:p-7"
               >
                 <div className="interest-wash pointer-events-none absolute inset-0" aria-hidden="true" />
                 <div className="relative z-10 flex items-start justify-between gap-4">
@@ -314,16 +248,8 @@ function Interests() {
                     <span className="interest-icon flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-2xl">
                       <Icon size={25} strokeWidth={1.7} aria-hidden="true" />
                     </span>
-                    <span className="interest-index font-mono text-[11px] tracking-[.12em]">
-                      {interest.number} <span className="opacity-40">/</span> 04
-                    </span>
-                  </div>
-                  <ArrowUpRight
-                    aria-hidden="true"
-                    size={21}
-                    strokeWidth={1.6}
-                    className="interest-diagonal mt-1 shrink-0"
-                  />
+                    <span className="interest-index font-mono text-[11px] tracking-[.12em]">{interest.number} / 04</span>
+                  </div><span className="interest-index font-mono text-[11px] tracking-[.12em]" aria-hidden="true">PERSONAL NOTES</span>
                 </div>
                 <div className="relative z-10 mt-auto max-w-md pt-9">
                   <p className="interest-detail mb-2 text-[10px] font-semibold uppercase tracking-[.18em]">
@@ -335,12 +261,11 @@ function Interests() {
                   <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                     {interest.description}
                   </p>
-                  <div className="interest-footer mt-5 flex items-center justify-between border-t pt-3.5">
-                    <span className="text-xs font-semibold tracking-wide">Read the stories</span>
-                    <ArrowRight className="interest-forward" size={17} strokeWidth={1.8} aria-hidden="true" />
+                  <div className="interest-footer mt-5 border-t pt-3.5 text-[11px] tracking-[.1em] uppercase">
+                    An ongoing curiosity
                   </div>
                 </div>
-              </Link>
+              </div>
             )
           })}
         </div>
@@ -355,52 +280,71 @@ export default async function Home() {
   return (
     <>
       <Container className="mt-9">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-            Engineer by profession, builder by curiosity.
-          </h1>
-          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I’m Winaldo, an engineer based in Tangerang, Indonesia. I spend my
-            time working in the transportation industry, building things with
-            code, while occasionally running and cycling. I’m also an archivist
-            at heart—I love documenting ideas, experiences, projects, and the
-            little things that might otherwise be forgotten. I’m currently
-            focused on growing my career, continuing my education, and figuring
-            out what kind of person I want to become along the way.
-          </p>
-          <div className="mt-6 flex gap-6">
-            <SocialLink href="https://x.com/winaldosatryadi" aria-label="Follow on X" icon={XIcon} />
-            <SocialLink
-              href="https://www.instagram.com/winaldomanurung/"
-              aria-label="Follow on Instagram"
-              icon={InstagramIcon}
-            />
-            <SocialLink
-              href="https://github.com/winaldomanurung"
-              aria-label="Follow on GitHub"
-              icon={GitHubIcon}
-            />
-            <SocialLink
-              href="https://id.linkedin.com/in/winaldo-satryadi-manurung"
-              aria-label="Follow on LinkedIn"
-              icon={LinkedInIcon}
-            />
+        <section aria-labelledby="home-title" className="home-hero relative overflow-hidden rounded-3xl px-6 py-9 sm:px-9 sm:py-12 lg:px-12 lg:py-14">
+          <div className="home-hero-decoration pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full border border-teal-500/15 sm:h-[420px] sm:w-[420px]" aria-hidden="true" />
+          <div className="home-hero-decoration pointer-events-none absolute -right-12 -top-12 h-52 w-52 rounded-full border border-teal-500/15 sm:h-[290px] sm:w-[290px]" aria-hidden="true" />
+          <div className="relative max-w-2xl">
+            <div className="mb-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[.18em] text-teal-700 dark:text-teal-300">
+              <Sparkles size={15} strokeWidth={1.8} aria-hidden="true" />
+              A personal archive
+            </div>
+            <h1 id="home-title" className="text-4xl font-bold leading-[1.14] tracking-tight text-zinc-900 sm:text-5xl lg:text-[3.65rem] dark:text-zinc-100">
+              Engineer by profession,<br />
+              <span className="home-hero-accent">builder by curiosity.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-8 text-zinc-600 dark:text-zinc-300">
+              I’m Winaldo, an engineer based in Tangerang, Indonesia. I spend my
+              time working in the transportation industry, building things with
+              code, while occasionally running and cycling. I’m also an archivist
+              at heart—I love documenting ideas, experiences, projects, and the
+              little things that might otherwise be forgotten. I’m currently
+              focused on growing my career, continuing my education, and figuring
+              out what kind of person I want to become along the way.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/articles" className="home-primary-link inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
+                <BookOpen size={17} aria-hidden="true" /> Explore my writing <ArrowUpRight size={16} aria-hidden="true" />
+              </Link>
+              <Link href="/about" className="home-secondary-link inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
+                More about me <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="mt-9 flex flex-wrap items-center gap-5 border-t border-zinc-300/60 pt-6 dark:border-zinc-700/60">
+              <span className="text-xs font-medium tracking-[.1em] text-zinc-500 dark:text-zinc-400">FIND ME ONLINE</span>
+              <div className="flex items-center gap-5">
+                <SocialLink href="https://x.com/winaldosatryadi" aria-label="Follow on X" icon={XIcon} />
+                <SocialLink href="https://www.instagram.com/winaldomanurung/" aria-label="Follow on Instagram" icon={InstagramIcon} />
+                <SocialLink href="https://github.com/winaldomanurung" aria-label="Follow on GitHub" icon={GitHubIcon} />
+                <SocialLink href="https://id.linkedin.com/in/winaldo-satryadi-manurung" aria-label="Follow on LinkedIn" icon={LinkedInIcon} />
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       </Container>
       <Interests />
       <Container className="mt-24 md:mt-28">
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
-          <div className="flex flex-col gap-16">
-            {articles.map((article) => (
-              <Article key={article.slug} article={article} />
-            ))}
+        <section aria-labelledby="latest-writing-heading">
+          <div className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-5 dark:border-zinc-700/70">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[.17em] text-teal-600 dark:text-teal-400">From the archive</p>
+              <h2 id="latest-writing-heading" className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl dark:text-zinc-100">Latest writing<span className="text-teal-500">.</span></h2>
+            </div>
+            <Link href="/articles" className="home-all-articles inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400">
+              All articles <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="space-y-10 lg:pl-16 xl:pl-24">
-            {/* <Newsletter /> */}
-            <Resume />
+          <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-12 lg:max-w-none lg:grid-cols-[minmax(0,1fr)_minmax(0,.88fr)] lg:gap-x-12">
+            <div className="flex min-w-0 flex-col">
+              {articles.map((article, index) => (
+                <Article key={article.slug} article={article} index={index} />
+              ))}
+              {articles.length === 0 && <p className="text-sm text-zinc-500 dark:text-zinc-400">New writing will appear here soon.</p>}
+            </div>
+            <div className="lg:pl-8">
+              <Resume />
+            </div>
           </div>
-        </div>
+        </section>
       </Container>
     </>
   )
