@@ -347,15 +347,6 @@ function Interests() {
   )
 }
 
- />
-            </Link>
-          ))}
-        </div>
-      </section>
-    </Container>
-  )
-}
-
 export default async function Home() {
   let articles = (await getAllArticles()).slice(0, 4)
 
